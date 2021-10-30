@@ -81,9 +81,7 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
     
         this.arcadePhysicsBody = this.body as Phaser.Physics.Arcade.Body;
         this.arcadePhysicsBody.setCircle(formH,-formH/2,-formH/2);
-        //this.scene.physics.world.add(this.arcadePhysicsBody);
         
-        //this.shootingAreaBody = new Phaser.Physics.Arcade.Body(this.arcadePhysicsBody.world,this);
         scene.add.existing(this);
     }
      

@@ -1,4 +1,6 @@
+import {Subject} from 'rxjs'
 import VirtualJoyStick from "../prefabs/VirtualJoyStick";
+import {inputManagerInstance,VirtualJoyStickController} from '../prefabs/InputManager'
 
 
 let joystick_singleton:VirtualJoyStick = null;
@@ -8,9 +10,10 @@ export class UIScene extends Phaser.Scene {
 	scoreText: Phaser.GameObjects.Text;
 	coinIcon: Phaser.GameObjects.Image;
 	virtualJoyStick:VirtualJoyStick;
+    virtualController:VirtualJoyStickController;
+    sceneUpdateObservable:Subject<void>;
 	constructor() {
 		super("UI"); // Name of the scene
-
 	}
 
 	init(): void {
@@ -37,6 +40,12 @@ export class UIScene extends Phaser.Scene {
 		this.virtualJoyStick = new VirtualJoyStick(this,100,100,'a');
 		this.input.setDraggable(this.virtualJoyStick);
 		joystick_singleton = this.virtualJoyStick;
+
+		this.sceneUpdateObservable = new Subject();
+
+    this.virtualController = new VirtualJoyStickController(this.sceneUpdateObservable.asObservable(),this.virtualJoyStick);
+    inputManagerInstance.add_android_controller(this,this.virtualController);
+
 	}
 
 	setupEvents(): void {

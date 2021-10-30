@@ -76,6 +76,12 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 	public touchStarted(){
 		return this.isActivated;
 	}
+	public disable(){
+		console.log('disabled');
+		this.disableInteractive();
+		this.setVisible(false);
+		this.setActive(false);
+	}
 	private handleDragHander(pointer: Phaser.Input.Pointer){
 		this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);
 		var d = this.tempMatrix.decomposeMatrix();

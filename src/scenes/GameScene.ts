@@ -3,15 +3,17 @@ import Player from "../prefabs/Player";
 
 import {ControllableGroup} from "../prefabs/boids/Soldier";
 import Chest from "../prefabs/Chest";
+import {inputManagerInstance,KeyboardInputController} from "../prefabs/InputManager";
 
 import {joystick_singleton} from './UIScene';
-import { Vector } from "matter";
+import { Subject } from "rxjs";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
 
 	player;
 	keys: object;
+	keyboardController:KeyboardInputController;
 	wall: Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
 	chests: Phaser.Physics.Arcade.Group;
 	goldPickupAudio: Phaser.Sound.BaseSound;
@@ -21,7 +23,7 @@ export default class GameScene extends Phaser.Scene {
 	boidsNum:integer = 50;
 	boidData:Float64Array;
 	controlGroup:ControllableGroup
-
+	sceneUpdateObservable:Subject<void>;
 	constructor() {
 		super("Game"); // Name of the scene
 		
@@ -34,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
 		let array_size = this.boidsNum**2+this.boidsNum; 
 		this.boidData = new Float64Array(array_size);
 		
+
 	}
 
 	create() {
@@ -73,7 +76,9 @@ export default class GameScene extends Phaser.Scene {
 		  });
 
 		  this.physics.add.collider(this.player,this.controlGroup);
-		  
+		this.sceneUpdateObservable = new Subject();
+		this.keyboardController = new KeyboardInputController(this.sceneUpdateObservable.asObservable(),this);
+		inputManagerInstance.add_keyboard_controller(this,this.keyboardController);
 	}
 
 	bound(boid) {
@@ -247,7 +252,7 @@ export default class GameScene extends Phaser.Scene {
 	};
 
 	update() {
-		
+		this.sceneUpdateObservable.next();
 		this.player.update(this.keys)
 		 
 		for(let i =0;i<this.boidsNum;i++){
