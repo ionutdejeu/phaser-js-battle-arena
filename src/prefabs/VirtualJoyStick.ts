@@ -2,6 +2,7 @@
 import "phaser";
 
 import { Subject } from 'rxjs'
+import {uiDevicePixelScaleRation} from './UiManager'
 
 const WHITE = 0xffffff
 
@@ -29,7 +30,12 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, tint: number = WHITE)
 	{  
-        super(scene, 100,window.innerHeight-120)
+        super(scene,30*uiDevicePixelScaleRation,110*uiDevicePixelScaleRation)
+		
+		
+		//let yc =  window.innerHeight*uiDevicePixelScaleRation-30*uiDevicePixelScaleRation;
+		//this.y = scene.cameras.main.worldView.-30*uiDevicePixelScaleRation
+		 
 		this.upTexture = texture
 		this.upTint = tint
 		this.downTexture = texture
@@ -39,10 +45,10 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 		this.disabledTexture = texture
 		this.disabledTint = tint
 		console.log("Created stck");
-		this.width = 100;
-		this.height = 100;
-		this.baseCircle =  this.scene.add.circle(0,0,100,tint)
-		this.pointerCircle =  this.scene.add.circle(0,0,10,0xff0000);
+		this.width = 10*uiDevicePixelScaleRation;
+		this.height = 10*uiDevicePixelScaleRation;
+		this.baseCircle =  this.scene.add.circle(0,0,20*uiDevicePixelScaleRation,tint,125)
+		this.pointerCircle =  this.scene.add.circle(0,0,7*uiDevicePixelScaleRation,0xff0000);
 		this.add(this.baseCircle);
 		this.add(this.pointerCircle);
 		scene.add.existing(this);
@@ -58,6 +64,8 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 		this.touchStartPos = new Phaser.Math.Vector2(0,0);
 		this.currTochPos = new Phaser.Math.Vector2(0,0);
 		this.direction = new Phaser.Math.Vector2(0,0);
+
+		console.log(this);
 
 
 
@@ -77,7 +85,6 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 		return this.isActivated;
 	}
 	public disable(){
-		console.log('disabled');
 		this.disableInteractive();
 		this.setVisible(false);
 		this.setActive(false);
@@ -85,12 +92,12 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 	private handleDragHander(pointer: Phaser.Input.Pointer){
 		this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);
 		var d = this.tempMatrix.decomposeMatrix();
-		let invPos = this.tempMatrix.applyInverse(pointer.x,pointer.y,);
+		let invPos = this.tempMatrix.applyInverse(pointer.x,pointer.y);
 		var dParent = this.tempParentMatrix.decomposeMatrix();
 		this.pointerCircle.setPosition(invPos.x,invPos.y);
 
 		this.currTochPos.set(invPos.x,invPos.y);
-		this.direction = this.currTochPos.subtract(this.touchStartPos).normalize().scale(160);
+		this.direction = this.currTochPos.subtract(this.touchStartPos).normalize();
 	}
 
 	private handleDragEnd(pointer: Phaser.Input.Pointer){

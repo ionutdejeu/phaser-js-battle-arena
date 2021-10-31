@@ -22,23 +22,7 @@ export default class Player extends Phaser.Physics.Arcade.Image {
 		this.scene.add.existing(this);
 	}
 	update_virtual(direction){
-		this.setVelocity(direction.x,direction.y);
+		this.setVelocity(direction.x*this.speed,direction.y*this.speed);
 	}
-	update(cursors) {
-		if (cursors.left.isDown) {
-			this.setVelocityX(-this.speed);
-		} else if (cursors.right.isDown) {
-			this.setVelocityX(this.speed);
-		} else {
-			this.setVelocityX(0);
-		}
-
-		if (cursors.up.isDown) {
-			this.setVelocityY(-this.speed);
-		} else if (cursors.down.isDown) {
-			this.setVelocityY(this.speed);
-		} else {
-			this.setVelocityY(0);
-		}
-	}
+	 
 }

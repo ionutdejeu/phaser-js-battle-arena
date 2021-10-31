@@ -1,4 +1,5 @@
-import { Subject } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
+import {FireParabolicProjectileAction} from '../Actions'
 
 const formation = { 
     gridW:4,
@@ -29,8 +30,15 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
     formationContainer:Phaser.GameObjects.Container;
     arcadePhysicsBody:Phaser.Physics.Arcade.Body;
     shootingRange:integer=200;
+    speed:integer=160;
     shootingAreaBody:Phaser.Physics.Arcade.Body;
     shootZone:Phaser.GameObjects.Zone;
+    shootRange:Phaser.Physics.Arcade.Image;
+    graphics:Phaser.GameObjects.Graphics;
+    graphicsTargetLine:Phaser.Geom.Line;
+    private tempMatrix = new Phaser.GameObjects.Components.TransformMatrix();
+    private tempParentMatrix = new Phaser.GameObjects.Components.TransformMatrix();
+
     constructor(scene: Phaser.Scene, x: number, y: number)
 	{  
         super(scene,x,y)
@@ -65,29 +73,39 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
 
             }
         }   
+        this.graphics = scene.add.graphics({
+            x:0,
+            y:0
+        });
+        this.graphics.lineStyle(2, 0x00ff00);
+        this.add(this.graphics);
+        this.graphicsTargetLine = new Phaser.Geom.Line(this.x,this.y,0,0);
         this.nrOfControllableEntities = this.controllableEntities.length;
         
         scene.physics.world.enable(this);
-        this.shootZone = scene.add.zone(-formH/2,-formH/2,5*formH,5*formW);
-        scene.physics.world.enable(this.shootZone);
-        this.add(this.shootZone);
+        //this.shootZone = scene.add.zone(-formH/2,-formH/2,5*formH,5*formW);
+        //scene.physics.world.enable(this.shootZone);
+        //this.add(this.shootZone);
+        let shootRangeRadius = 200;
+        this.shootRange = scene.physics.add.image(-formH/2-shootRangeRadius/2,-formH/2-shootRangeRadius/2,null);
+        this.shootRange.setVisible(false);
+        scene.physics.world.enable(this.shootRange);
+        this.add(this.shootRange);
         
-        let a = scene.add.image(-100,-100,null);
-        scene.physics.world.enable(a);
-        let aBody =  a.body as Phaser.Physics.Arcade.Body;
-        aBody.setCircle(100);
-        this.add(a);
-        
+        this.shootRange.setCircle(shootRangeRadius,0,0);    
     
         this.arcadePhysicsBody = this.body as Phaser.Physics.Arcade.Body;
         this.arcadePhysicsBody.setCircle(formH,-formH/2,-formH/2);
-        
+
         scene.add.existing(this);
+        this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);
+
     }
      
     update_virtual(direction:Phaser.Math.Vector2){
 		if (direction.lengthSq()>0){
-            this.arcadePhysicsBody.setVelocity(direction.x,direction.y);
+            
+            this.arcadePhysicsBody.setVelocity(direction.x*this.speed,direction.y*this.speed);
             
         }
         else{
@@ -105,7 +123,6 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
                 this.controllableEntities[i].setFlipX(false);
             }
         }
-        
 
 	}
 
@@ -114,15 +131,15 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
 		var angleRad = Phaser.Math.Angle.BetweenPoints(zeroPoint, velocity);
 		return Phaser.Math.RadToDeg(angleRad);
 	};
-    
-    private assignPositionsToEntities(numberOfEntities:integer){
 
+    draw_target_line(x,y,updateObservable:Observable<void>){
+        this.graphics.clear();
+        let invToPos = this.tempMatrix.applyInverse(x,y);
+        let invFromPos = this.tempParentMatrix.applyInverse(this.x,this.y);
+
+        this.graphicsTargetLine.setTo(invFromPos.x,invFromPos.y,invToPos.x,invToPos.y);
+        this.graphics.strokeLineShape(this.graphicsTargetLine);
         
-        for(let i = 0;i<formation.gridH;i++){
-            for(let j = 0;j<formation.gridW;j++){
-                
-            }    
-        }    
     }
 }
 export class ControllableEntity extends Phaser.GameObjects.Sprite{ 

@@ -6,11 +6,11 @@ import {UIScene} from "./scenes/UIScene";
  
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     backgroundColor: '#125555',
     // TODO: OnResize
-	width: window.innerWidth,
-	height: window.innerHeight,
+	width:  window.innerWidth * window.devicePixelRatio,
+	height: window.innerHeight * window.devicePixelRatio,
     physics: {
 		default: "arcade",
 		arcade: {
@@ -24,6 +24,7 @@ const config = {
  
 window.onload = (): void => {
 	const game = new Phaser.Game(config);
+	console.log(config);
 	// Allow Resize
 	resize();
 	window.addEventListener("resize", resize, true);
@@ -31,15 +32,14 @@ window.onload = (): void => {
 
 function resize(): void {
 	const canvas = document.querySelector("canvas");
-	const width = window.innerWidth;
-	const height = window.innerHeight;
-	const wratio = width / height;
-	const ratio = Number(config.width) / Number(config.height);
-	if (wratio < ratio) {
-		canvas.style.width = width + "px";
-		canvas.style.height = width / ratio + "px";
-	} else {
-		canvas.style.width = height * ratio + "px";
-		canvas.style.height = height + "px";
-	}
+	var width = window.innerWidth, height = window.innerHeight;
+    var wratio = width / height, ratio = canvas.width / canvas.height;
+
+    if (wratio < ratio) {
+        canvas.style.width = width + "px";
+        canvas.style.height = (width / ratio) + "px";
+    } else {
+        canvas.style.width = (height * ratio) + "px";
+        canvas.style.height = height + "px";
+    }
 }

@@ -1,7 +1,7 @@
 import "phaser";
 
 
-export default class SpriteButton{
+export default class SpriteButton {
 
     scene:Phaser.Scene
     sprite:Phaser.GameObjects.Sprite;

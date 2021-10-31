@@ -4,9 +4,8 @@ import Player from "../prefabs/Player";
 import {ControllableGroup} from "../prefabs/boids/Soldier";
 import Chest from "../prefabs/Chest";
 import {inputManagerInstance,KeyboardInputController} from "../prefabs/InputManager";
-
-import {joystick_singleton} from './UIScene';
 import { Subject } from "rxjs";
+import { GameObjects } from "phaser";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
@@ -35,8 +34,6 @@ export default class GameScene extends Phaser.Scene {
 		this.scene.launch("BezierScene");
 		let array_size = this.boidsNum**2+this.boidsNum; 
 		this.boidData = new Float64Array(array_size);
-		
-
 	}
 
 	create() {
@@ -70,15 +67,20 @@ export default class GameScene extends Phaser.Scene {
 		  this.physics.add.collider(this.collisionGroup,this.collisionGroup);
 		  this.physics.add.collider(this.collisionGroup,this.player);
 		  this.physics.add.collider(this.collisionGroup,this.controlGroup);
-
-		  this.physics.add.overlap(this.collisionGroup,this.controlGroup.shootZone,(obj1,obj2)=>{
-			 
+		  this.physics.add.overlap(this.collisionGroup,this.controlGroup.shootRange,(obj1,obj2:GameObjects.GameObject)=>{
+			 this.controlGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
 		  });
 
-		  this.physics.add.collider(this.player,this.controlGroup);
+		this.physics.add.collider(this.player,this.controlGroup);
 		this.sceneUpdateObservable = new Subject();
 		this.keyboardController = new KeyboardInputController(this.sceneUpdateObservable.asObservable(),this);
 		inputManagerInstance.add_keyboard_controller(this,this.keyboardController);
+
+		inputManagerInstance.onAxisChangedObservable.subscribe((newValues)=>{
+			this.controlGroup.update_virtual(newValues);
+			this.player.update_virtual(newValues);
+		});
+		this.cameras.main.startFollow(this.controlGroup);
 	}
 
 	bound(boid) {
@@ -253,8 +255,8 @@ export default class GameScene extends Phaser.Scene {
 
 	update() {
 		this.sceneUpdateObservable.next();
-		this.player.update(this.keys)
-		 
+		console.log(this.cameras.main.getWorldPoint(this.cameras.main.centerX,this.cameras.main.centerY),
+		this.cameras.main.centerX,this.cameras.main.centerY,this.controlGroup.x,this.controlGroup.y);
 		for(let i =0;i<this.boidsNum;i++){
 			for(let j=0;j<this.boidsNum;j++){
 				this.boidData[i*this.boidsNum+j] = Phaser.Math.Distance.BetweenPointsSquared(this.boids[i], this.boids[j]);
@@ -264,13 +266,7 @@ export default class GameScene extends Phaser.Scene {
 		for(let j=playerSegment;j<this.boidsNum;j++){
 			this.boidData[j] = Phaser.Math.Distance.BetweenPointsSquared(this.player, this.boids[j]);
 		}
-		if(joystick_singleton !== null){
-			this.controlGroup.update_virtual(joystick_singleton.getDirection());
-		}
-		if(joystick_singleton !== null && joystick_singleton.touchStarted()){
-			this.player.update_virtual(joystick_singleton.getDirection());
-
-		}
+ 
 		 
 		for(let i = 0;i<this.boidsNum;i++){
 			
@@ -319,7 +315,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	createGroup(){
-		this.controlGroup = new ControllableGroup(this,600,600);
+		this.controlGroup = new ControllableGroup(this,0,0);
 	}
 
 	createInput() {
