@@ -35,7 +35,12 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 		
 		//let yc =  window.innerHeight*uiDevicePixelScaleRation-30*uiDevicePixelScaleRation;
 		//this.y = scene.cameras.main.worldView.-30*uiDevicePixelScaleRation
-		 
+		let l= scene.cameras.main.worldView.left - 30*uiDevicePixelScaleRation;
+		let b = scene.cameras.main.worldView.bottom - 30*uiDevicePixelScaleRation;
+		let woldPos = scene.cameras.main.getWorldPoint(l,b);
+		this.x = woldPos.x
+		this.y = woldPos.y
+		
 		this.upTexture = texture
 		this.upTint = tint
 		this.downTexture = texture

@@ -256,7 +256,8 @@ export default class GameScene extends Phaser.Scene {
 	update() {
 		this.sceneUpdateObservable.next();
 		console.log(this.cameras.main.getWorldPoint(this.cameras.main.centerX,this.cameras.main.centerY),
-		this.cameras.main.centerX,this.cameras.main.centerY,this.controlGroup.x,this.controlGroup.y);
+		this.cameras.main.centerX,this.cameras.main.centerY,this.controlGroup.x,this.controlGroup.y,
+		this.cameras.main.worldView.bottom,this.cameras.main.worldView.left);
 		for(let i =0;i<this.boidsNum;i++){
 			for(let j=0;j<this.boidsNum;j++){
 				this.boidData[i*this.boidsNum+j] = Phaser.Math.Distance.BetweenPointsSquared(this.boids[i], this.boids[j]);
