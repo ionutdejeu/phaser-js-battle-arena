@@ -30,9 +30,7 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, tint: number = WHITE)
 	{  
-        super(scene,30*uiDevicePixelScaleRation,110*uiDevicePixelScaleRation)
-		
-		
+        super(scene,30*uiDevicePixelScaleRation,110*uiDevicePixelScaleRation);
 		//let yc =  window.innerHeight*uiDevicePixelScaleRation-30*uiDevicePixelScaleRation;
 		//this.y = scene.cameras.main.worldView.-30*uiDevicePixelScaleRation
 		let l= scene.cameras.main.worldView.left - 30*uiDevicePixelScaleRation;
@@ -70,8 +68,7 @@ export default class VirtualJoyStick extends Phaser.GameObjects.Container
 		this.currTochPos = new Phaser.Math.Vector2(0,0);
 		this.direction = new Phaser.Math.Vector2(0,0);
 
-		console.log(this);
-
+		console.log(this.parentContainer,scene.game.scale.width,scene.game.scale.height);
 
 
     }

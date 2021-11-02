@@ -1,8 +1,7 @@
 import {Subject} from 'rxjs'
 import VirtualJoyStick from "../prefabs/VirtualJoyStick";
 import {inputManagerInstance,VirtualJoyStickController} from '../prefabs/InputManager'
-import {FireParabolicProjectileAction} from '../prefabs/Actions';
-
+import {AlignGrid} from '../prefabs/AlignGrid'
 
 export class UIScene extends Phaser.Scene {
 	gameScene: Phaser.Scene;
@@ -11,6 +10,8 @@ export class UIScene extends Phaser.Scene {
 	virtualJoyStick:VirtualJoyStick;
     virtualController:VirtualJoyStickController;
     sceneUpdateObservable:Subject<void>;
+	graphics:Phaser.GameObjects.Graphics;
+	uiGrid:AlignGrid;
 	constructor() {
 		super("UI"); // Name of the scene
 	}
@@ -18,6 +19,8 @@ export class UIScene extends Phaser.Scene {
 	init(): void {
 		
 		this.gameScene = this.scene.get("Game");
+		this.scene.bringToTop();
+
 	}
 
 	create(): void {
@@ -26,7 +29,7 @@ export class UIScene extends Phaser.Scene {
 		console.log(this.cameras.main);
 	}
 
-	update(time){
+	update(){
 		this.sceneUpdateObservable.next();
 		
 	}
@@ -44,13 +47,12 @@ export class UIScene extends Phaser.Scene {
 		
 		this.sceneUpdateObservable = new Subject();
 
-    this.virtualController = new VirtualJoyStickController(this.sceneUpdateObservable.asObservable(),this.virtualJoyStick);
-    inputManagerInstance.add_android_controller(this,this.virtualController);
-	let projectile = new FireParabolicProjectileAction(this,this.sceneUpdateObservable,new Phaser.Math.Vector2(400,400),new Phaser.Math.Vector2(20,20));
-	let projectile2 = new FireParabolicProjectileAction(this,this.sceneUpdateObservable,new Phaser.Math.Vector2(400,400),new Phaser.Math.Vector2(40,40));
-
-	let projectile3 = new FireParabolicProjectileAction(this,this.sceneUpdateObservable,new Phaser.Math.Vector2(400,400),new Phaser.Math.Vector2(40,60));
-
+		this.virtualController = new VirtualJoyStickController(this.sceneUpdateObservable.asObservable(),this.virtualJoyStick);
+		inputManagerInstance.add_android_controller(this,this.virtualController);
+		this.uiGrid = new AlignGrid(this,3,4);
+		this.uiGrid.placeAt(0,2,this.virtualJoyStick);
+		this.uiGrid.draw();
+		
 	}
 	 
 	setupEvents(): void {

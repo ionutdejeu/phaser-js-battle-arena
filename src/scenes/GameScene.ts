@@ -23,6 +23,8 @@ export default class GameScene extends Phaser.Scene {
 	boidData:Float64Array;
 	controlGroup:ControllableGroup
 	sceneUpdateObservable:Subject<void>;
+	graphics:Phaser.GameObjects.Graphics;
+
 	constructor() {
 		super("Game"); // Name of the scene
 		
@@ -81,6 +83,12 @@ export default class GameScene extends Phaser.Scene {
 			this.player.update_virtual(newValues);
 		});
 		this.cameras.main.startFollow(this.controlGroup);
+		
+		//this.graphics.strokePath();
+
+		//this.graphics.strokeRect(0,0,this.scale.width,this.scale.height);
+		
+		this.sceneUpdateObservable.next();
 	}
 
 	bound(boid) {
@@ -255,9 +263,8 @@ export default class GameScene extends Phaser.Scene {
 
 	update() {
 		this.sceneUpdateObservable.next();
-		console.log(this.cameras.main.getWorldPoint(this.cameras.main.centerX,this.cameras.main.centerY),
-		this.cameras.main.centerX,this.cameras.main.centerY,this.controlGroup.x,this.controlGroup.y,
-		this.cameras.main.worldView.bottom,this.cameras.main.worldView.left);
+		
+		
 		for(let i =0;i<this.boidsNum;i++){
 			for(let j=0;j<this.boidsNum;j++){
 				this.boidData[i*this.boidsNum+j] = Phaser.Math.Distance.BetweenPointsSquared(this.boids[i], this.boids[j]);
