@@ -34,6 +34,14 @@ export class VirtualJoyStickController implements AbstractInputController{
     supports_os(os: string) {
         
     }
+
+    update(){
+        this.axisValues = this.joyStick.getDirection();
+        this.onValueChange.next(this.axisValues);
+        this.prevAxisValues.x = this.axisValues.x;
+        this.prevAxisValues.y = this.axisValues.y;
+            
+    }
     enable(){
         this.updateObservalbeSucscription = this.updateObservable.subscribe(()=>{
             this.axisValues = this.joyStick.getDirection();
@@ -42,10 +50,6 @@ export class VirtualJoyStickController implements AbstractInputController{
             this.prevAxisValues.y = this.axisValues.y;
             
         });
-    }
-    
-    wireChangeEvents(){
-        
     }
     
     disable(){

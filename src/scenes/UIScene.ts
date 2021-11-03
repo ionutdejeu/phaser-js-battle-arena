@@ -50,7 +50,7 @@ export class UIScene extends Phaser.Scene {
 		this.virtualController = new VirtualJoyStickController(this.sceneUpdateObservable.asObservable(),this.virtualJoyStick);
 		inputManagerInstance.add_android_controller(this,this.virtualController);
 		this.uiGrid = new AlignGrid(this,3,4);
-		this.uiGrid.placeAt(0,2,this.virtualJoyStick);
+		this.uiGrid.placeAt(0,3,this.virtualJoyStick);
 		this.uiGrid.draw();
 		
 	}

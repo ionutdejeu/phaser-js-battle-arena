@@ -1,5 +1,4 @@
 import "phaser";
-import { Cameras } from "phaser";
 import BootScene from "./scenes/BootScene";
 import GameScene from "./scenes/GameScene";
 import TitleScene from "./scenes/TitleScene";
@@ -24,7 +23,6 @@ const config = {
 var game:Phaser.Game = null;
 window.onload = (): void => {
 	game = new Phaser.Game(config);
-	console.log(config);
 	// Allow Resize
 	resize();
 	game.scale.lockOrientation('landscape');
@@ -35,19 +33,24 @@ window.onload = (): void => {
 function resize(): void {
 	const canvas = document.querySelector("canvas");
 	var width = window.innerWidth, height = window.innerHeight;
-    var wratio = width / height, ratio = game.scale.width / game.scale.height;
+    var wratio = width / height;
 
-	console.log(wratio);
-    if (wratio < ratio) {
-        canvas.style.width = width*ratio + "px";
-        canvas.style.height = (width) + "px";
-		game.scale.setGameSize(width*ratio/window.devicePixelRatio,width /window.devicePixelRatio)
 
+	console.log('w:',width,'h:',height);
+	console.log('wration:',wratio);
+	console.log('device ratio:',window.devicePixelRatio);
+
+    if (wratio >1) {
+		var width = window.innerWidth / window.devicePixelRatio;
+		var height = window.innerHeight / window.devicePixelRatio 
+		game.scale.setGameSize(width,height)
+
+        
     } else {
-		console.log('else');
-        canvas.style.width = (height * ratio) + "px";
-        canvas.style.height = height + "px";
-		game.scale.setGameSize(height * ratio/window.devicePixelRatio,height/window.devicePixelRatio)
+		console.log('should be:');
+        var width = window.innerWidth / devicePixelRatio/wratio;
+		var height = window.innerHeight / devicePixelRatio/wratio; 
+		game.scale.setGameSize(width,height)
 
     }
 
