@@ -16,10 +16,12 @@ export class UIScene extends Phaser.Scene {
 		super("UI"); // Name of the scene
 	}
 
+
 	init(): void {
 		
 		this.gameScene = this.scene.get("Game");
 		this.scene.bringToTop();
+		 
 
 	}
 

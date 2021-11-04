@@ -1,2 +1,0 @@
-import {UIBlock} from './UiBlock';
-
