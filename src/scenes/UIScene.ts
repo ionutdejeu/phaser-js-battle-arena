@@ -2,6 +2,9 @@ import {Subject} from 'rxjs'
 import VirtualJoyStick from "../prefabs/VirtualJoyStick";
 import {inputManagerInstance,VirtualJoyStickController} from '../prefabs/InputManager'
 import {AlignGrid} from '../prefabs/AlignGrid'
+import { UIBlock } from '../prefabs/ui/UiBlock';
+import { ItemBar } from '../prefabs/ui/ItemBar';
+
 
 export class UIScene extends Phaser.Scene {
 	gameScene: Phaser.Scene;
@@ -12,6 +15,7 @@ export class UIScene extends Phaser.Scene {
     sceneUpdateObservable:Subject<void>;
 	graphics:Phaser.GameObjects.Graphics;
 	uiGrid:AlignGrid;
+	_itemBar:ItemBar
 	constructor() {
 		super("UI"); // Name of the scene
 	}
@@ -21,8 +25,8 @@ export class UIScene extends Phaser.Scene {
 		
 		this.gameScene = this.scene.get("Game");
 		this.scene.bringToTop();
-		 
-
+		this._itemBar = new ItemBar(this);
+		this._itemBar.init();
 	}
 
 	create(): void {

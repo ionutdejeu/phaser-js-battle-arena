@@ -13,8 +13,7 @@ export class Align{
         obj.x = this.scene.scale.width/2;
         obj.y = this.scene.scale.height/2;
     }
-    
-    
+
 }
 const PositionOnSceneCenter = (scene: Phaser.Scene,obj:Phaser.GameObjects.Sprite)=>{
     obj.x = scene.scale.width/2;

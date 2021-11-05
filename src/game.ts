@@ -52,37 +52,5 @@ function resize():void{
     canvas.style.height = windowHeight + "px";
 	console.log('h/dpr:',windowWidth/ window.devicePixelRatio,'w/dpr',windowHeight/window.devicePixelRatio);
 	game.scale.refresh();
-    //if(windowRatio < gameRatio){
-    //    canvas.style.width = windowWidth + "px";
-    //    canvas.style.height = (windowWidth / gameRatio) + "px";
-	//	
-	//	game.scale.resize(windowHeight,windowWidth / gameRatio )
-//
-    //}
-    //else {
-    //    canvas.style.width = (windowHeight * gameRatio) + "px";
-    //    canvas.style.height = windowHeight + "px";
-	//	game.scale.resize(windowHeight * gameRatio ,windowHeight )
-    //}
-}
-function resize2(): void {
-	const canvas = document.querySelector("canvas");
-	var width = window.innerWidth, height = window.innerHeight;
-    var wratio = width / height;
-
-	console.log('w:',width,'h:',height);
-	console.log('wration:',wratio);
-	console.log('device ratio:',window.devicePixelRatio);
-  if (wratio >1) {
-		var width = window.innerWidth / window.devicePixelRatio;
-		var height = window.innerHeight / window.devicePixelRatio; 
-		game.scale.setGameSize(width,height)
-		
-    } else {
-        var width = window.innerWidth / devicePixelRatio/wratio;
-		var height = window.innerHeight / devicePixelRatio/wratio; 
-		game.scale.setGameSize(width,height)
-    }
-
-
+    
 }
