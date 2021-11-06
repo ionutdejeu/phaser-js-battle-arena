@@ -1,5 +1,7 @@
 import { Observable, Subject } from 'rxjs'
 import {FireParabolicProjectileAction} from '../Actions'
+import { BaseProjectile } from '../player/baseProjectile'
+import { PlayerAttackStats, PlayerBodyStats, PlayerDefenceStats } from '../player/stats'
 
 const formation = { 
     gridW:4,
@@ -38,6 +40,13 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
     graphicsTargetLine:Phaser.Geom.Line;
     private tempMatrix = new Phaser.GameObjects.Components.TransformMatrix();
     private tempParentMatrix = new Phaser.GameObjects.Components.TransformMatrix();
+    bodyStats: PlayerBodyStats;
+    defenceStats: PlayerDefenceStats;
+    attackStats:PlayerAttackStats;
+    targetX:number
+    targetY:number
+    shootTimer:Phaser.Time.TimerEvent;
+
 
     constructor(scene: Phaser.Scene, x: number, y: number)
 	{  
@@ -70,7 +79,6 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
                 var ce = new ControllableEntity(scene, position.x,position.y, "characters", 2)
                 this.controllableEntities.push(ce)
                 this.add(ce);
-
             }
         }   
         this.graphics = scene.add.graphics({
@@ -99,9 +107,25 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
 
         scene.add.existing(this);
         this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);
-
+        this.attackStats = new PlayerAttackStats();
+        this.attackStats.attackSpeed = 200;
+        this.shootTimer = this.scene.time.addEvent({
+            loop:true,
+            callback:this.shootProjectile,
+            callbackScope:this,
+            delay:this.attackStats.attackSpeed,
+        });
+        
     }
-     
+    
+    shootProjectile(){
+        console.log("Shoot",this.targetX,this.targetY);
+        let bullet = this.scene.physics.add.sprite(this.x,this.y,'bullet')
+        let dirx = (this.x - this.targetX);
+        let diry = (this.y - this.targetY);
+        let dir = new Phaser.Math.Vector2(dirx,diry).normalize().scale(-this.attackStats.attackProjectileSpeed);
+        bullet.setVelocity(dir.x,dir.y);
+    }
     update_virtual(direction:Phaser.Math.Vector2){
 		if (direction.lengthSq()>0){
             
@@ -123,7 +147,6 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
                 this.controllableEntities[i].setFlipX(false);
             }
         }
-
 	}
 
     computeAngle(velocity) {
@@ -134,6 +157,8 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
 
     draw_target_line(x,y,updateObservable:Observable<void>){
         this.graphics.clear();
+        this.targetX = x
+        this.targetY = y
         let invToPos = this.tempMatrix.applyInverse(x,y);
         let invFromPos = this.tempParentMatrix.applyInverse(this.x,this.y);
 

@@ -4,6 +4,8 @@ import { UIBlock } from './UiBlock';
 export class AlignGrid {
     cw:number;
     ch:number;
+    h:number;
+    w:number;
     graphics:Phaser.GameObjects.Graphics;
     scene:Phaser.Scene
 
@@ -11,9 +13,9 @@ export class AlignGrid {
        
         if(parent){
             this.cw = parent.displayWidth / cols;
-            this.cw = parent.displayWidth / cols;
-            let a = new Phaser.Structs.Size()
-            
+            this.ch = parent.displayHeight / rows;
+            this.h = parent.displayHeight
+            this.w  = parent.displayWidth
             
         }
         else{
@@ -21,6 +23,8 @@ export class AlignGrid {
             this.cw = scene.scale.width / cols;
         //ch cell height is the parent height divided the number of rows
             this.ch = scene.scale.height / rows;
+            this.h = scene.scale.height;
+            this.w = scene.scale.width;
         }
         //scene.add.existing();
         this.scene = scene;
@@ -58,21 +62,19 @@ export class AlignGrid {
             x:0,
             y:0
         });
-        this.graphics.setDepth(100);
         this.graphics.setScrollFactor(0,0);
-        this.graphics.lineStyle(10, 0xff0000, 1);
-        this.graphics.fillStyle(10, 0xff0000);
+        this.graphics.lineStyle(1, 0xff0000, 1);
+        this.graphics.fillStyle(1, 0xff0000);
 
         this.graphics.beginPath();
-        for (var i = 0; i < this.scene.scale.width; i += this.cw) {
+        for (var i = 0; i < this.w; i += this.cw) {
             this.graphics.moveTo(i, 0);
-            this.graphics.lineTo(i, this.scene.scale.height);
+            this.graphics.lineTo(i, this.h);
         }
-        for (var i = 0; i < this.scene.scale.height; i += this.ch) {
+        for (var i = 0; i < this.h; i += this.ch) {
             this.graphics.moveTo(0, i);
-            this.graphics.lineTo(this.scene.scale.width, i);
+            this.graphics.lineTo(this.w, i);
         }
-        this.graphics.closePath();
         this.graphics.strokePath();
     }
 }

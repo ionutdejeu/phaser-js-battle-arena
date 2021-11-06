@@ -18,6 +18,8 @@ export default class BootScene extends Phaser.Scene {
 	loadImages(): void {
 		this.load.image("button1", "assets/images/ui/blue_button01.png");
 		this.load.image("button2", "assets/images/ui/blue_button02.png");
+		this.load.image("bullet", "assets/images/Bullet.png");
+
 	}
 
 	// Load SpriteSheets

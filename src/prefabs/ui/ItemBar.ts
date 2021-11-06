@@ -22,12 +22,10 @@ export class ItemBar extends UIBlock{
 
     init(){
         this._backgroundGraphics = this._scene.add.graphics();
-        for(let i = 0;i<9;i++){
-            this._backgroundGraphics.fillStyle(0xffff00, 1);
+        this._backgroundGraphics.fillStyle(0xffff00, 1);
             //  32px radius on the corners
-            let x = this._grid.getCellCenterX(i,0);
-            this._backgroundGraphics.fillRoundedRect(x, 32, 300, 200, 32);
-        }
+        this._backgroundGraphics.fillRoundedRect(1, 1, this._scene.scale.width, 100/devicePixelRatio, 5);
+ 
     }
 
 }
