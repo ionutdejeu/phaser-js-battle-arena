@@ -6,6 +6,7 @@ import Chest from "../prefabs/Chest";
 import {inputManagerInstance,KeyboardInputController} from "../prefabs/InputManager";
 import { Subject } from "rxjs";
 import { GameObjects } from "phaser";
+import { ProjectileManager } from "../prefabs/player/projectileManager";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
@@ -24,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
 	controlGroup:ControllableGroup
 	sceneUpdateObservable:Subject<void>;
 	graphics:Phaser.GameObjects.Graphics;
+	projManager: ProjectileManager;
 
 	constructor() {
 		super("Game"); // Name of the scene
@@ -31,6 +33,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	init() {
+		
 		this.score = 0;
 		this.scene.launch("UI");
 		this.scene.launch("BezierScene");
@@ -39,6 +42,9 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	create() {
+		//this.graphics.strokeRect(0,0,this.scale.width,this.scale.height);
+		this.projManager = new ProjectileManager(this);
+		
 		this.createAudio();
 		this.createWalls();
 		this.createChests();
@@ -86,8 +92,8 @@ export default class GameScene extends Phaser.Scene {
 		
 		//this.graphics.strokePath();
 
-		//this.graphics.strokeRect(0,0,this.scale.width,this.scale.height);
 		
+		this.projManager.setupCollisionWithEnemeis(this.collisionGroup);
 		this.sceneUpdateObservable.next();
 	}
 
@@ -323,7 +329,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	createGroup(){
-		this.controlGroup = new ControllableGroup(this,0,0);
+		this.controlGroup = new ControllableGroup(this,0,0,this.projManager);
 	}
 
 	createInput() {

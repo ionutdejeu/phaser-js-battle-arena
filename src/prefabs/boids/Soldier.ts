@@ -1,6 +1,7 @@
 import { Observable, Subject } from 'rxjs'
 import {FireParabolicProjectileAction} from '../Actions'
 import { BaseProjectile } from '../player/baseProjectile'
+import { IPorjectileManager } from '../player/projectileManager'
 import { PlayerAttackStats, PlayerBodyStats, PlayerDefenceStats } from '../player/stats'
 
 const formation = { 
@@ -46,11 +47,13 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
     targetX:number
     targetY:number
     shootTimer:Phaser.Time.TimerEvent;
+    _projManager:IPorjectileManager;
 
 
-    constructor(scene: Phaser.Scene, x: number, y: number)
+    constructor(scene: Phaser.Scene, x: number, y: number,projManager:IPorjectileManager)
 	{  
         super(scene,x,y)
+        this._projManager = projManager;
         this.relative_coordinates = [];
         this.controllableEntities = [];
         this.collisionGroup = scene.physics.add.group({
@@ -116,15 +119,14 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
             delay:this.attackStats.attackSpeed,
         });
         
+        
     }
     
     shootProjectile(){
-        console.log("Shoot",this.targetX,this.targetY);
-        let bullet = this.scene.physics.add.sprite(this.x,this.y,'bullet')
         let dirx = (this.x - this.targetX);
         let diry = (this.y - this.targetY);
         let dir = new Phaser.Math.Vector2(dirx,diry).normalize().scale(-this.attackStats.attackProjectileSpeed);
-        bullet.setVelocity(dir.x,dir.y);
+        this._projManager.spawn(this.x,this.y,dir.x,dir.y);
     }
     update_virtual(direction:Phaser.Math.Vector2){
 		if (direction.lengthSq()>0){
