@@ -1,7 +1,5 @@
 import { Observable, Subject } from 'rxjs'
-import {FireParabolicProjectileAction} from '../Actions'
-import { BaseProjectile } from '../player/baseProjectile'
-import { IPorjectileManager } from '../player/projectileManager'
+import { IPorjectileManager } from '../projectiles/projectileManager'
 import { PlayerAttackStats, PlayerBodyStats, PlayerDefenceStats } from '../player/stats'
 
 const formation = { 

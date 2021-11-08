@@ -22,7 +22,6 @@ export class VirtualJoyStickDemoScene extends Phaser.Scene {
     this.virtualJoyStick = new VirtualJoyStick(this,100,100,"daw",0xFFFFFF);
     this.input.setDraggable(this.virtualJoyStick);
     this.sceneUpdateObservable = new Subject();
-
     this.virtualController = new VirtualJoyStickController(this.sceneUpdateObservable.asObservable(),this.virtualJoyStick);
     inputManagerInstance.add_android_controller(this,this.virtualController);
 

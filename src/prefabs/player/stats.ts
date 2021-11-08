@@ -1,4 +1,4 @@
-import { BaseProjectile } from "./baseProjectile";
+import { BaseProjectile } from "../projectiles/baseProjectile";
 
 
 export class PlayerBodyStats { 

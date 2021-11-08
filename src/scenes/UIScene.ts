@@ -57,7 +57,7 @@ export class UIScene extends Phaser.Scene {
 		inputManagerInstance.add_android_controller(this,this.virtualController);
 		this.uiGrid = new AlignGrid(this,3,4);
 		this.uiGrid.placeAt(0,3,this.virtualJoyStick);
-		this.uiGrid.draw();
+		//this.uiGrid.draw();
 		
 	}
 	 
