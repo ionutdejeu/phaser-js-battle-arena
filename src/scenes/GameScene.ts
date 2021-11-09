@@ -41,8 +41,8 @@ export default class GameScene extends Phaser.Scene {
 		//this.graphics.strokeRect(0,0,this.scale.width,this.scale.height);
 		this.projManager = new ProjectileManager(this);
 		this.boidManager = new BoidManager(this);
-		this.boidManager.init(200);
-		this.boidManager.initAttractors(2,200)
+		this.boidManager.init(400);
+		this.boidManager.initAttractors(2,400)
 
 		
 		this.createAudio();
@@ -77,6 +77,7 @@ export default class GameScene extends Phaser.Scene {
 			this.controlGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
 		 });
 		this.projManager.setupCollisionWithEnemeis(this.boidManager);
+		this.boidManager.followPlayer(this.controlGroup)
 		this.sceneUpdateObservable.next();
 	}
 
