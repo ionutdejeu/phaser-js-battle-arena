@@ -69,7 +69,8 @@ export class BoidManager implements IBoidManager{
     _boidsData:BoidPoolCacheData;
     _attractorsCachedData:BoidPoolCacheData;
     _repelersCachedData:BoidPoolCacheData;
-    
+    _zeroPoint = new Phaser.Geom.Point(0, 0);
+
 
     constructor(sc:Phaser.Scene){
         this._scene = sc
@@ -151,8 +152,8 @@ export class BoidManager implements IBoidManager{
     update(){
         //compute distances between all boids
         for(let i =0;i<this._boidsData.poolSize;i++){
-			for(let j=0;j<this._boidsData.poolSize;j++){
-                if(i!=j && this._boidsData.liveObjects[i] == true 
+			for(let j=0;j<i;j++){
+                if(this._boidsData.liveObjects[i] == true 
                     && this._boidsData.liveObjects[j]==true){
                         
 				    let dist = 
@@ -161,6 +162,8 @@ export class BoidManager implements IBoidManager{
                         this._boidsData.boidsObjects[j]);
                     
                     this._boidsData.boidCachedDistances[i*this._boidsData.poolSize+j] = dist
+                    this._boidsData.boidCachedDistances[j*this._boidsData.poolSize+i] = dist
+
                 }
 			}
 		}       
@@ -257,8 +260,7 @@ export class BoidManager implements IBoidManager{
     }
 
     computeAngle(velocity) {
-		var zeroPoint = new Phaser.Geom.Point(0, 0);
-		var angleRad = Phaser.Math.Angle.BetweenPoints(zeroPoint, velocity);
+		var angleRad = Phaser.Math.Angle.BetweenPoints(this._zeroPoint, velocity);
 		return Phaser.Math.RadToDeg(angleRad);
 	};
 

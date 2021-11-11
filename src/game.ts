@@ -5,8 +5,6 @@ import TitleScene from "./scenes/TitleScene";
 import {UIScene} from "./scenes/UIScene";
 import MainMenuScene from "./scenes/MainMenuScene";
 
- 
-
 const config = {
     type: Phaser.WEBGL,
     // TODO: OnResize
