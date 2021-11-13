@@ -9,7 +9,7 @@ export default class MainMenuScene extends Phaser.Scene {
 	}
 
     init(): void {
-
+		
 	}
 
 	create(): void {

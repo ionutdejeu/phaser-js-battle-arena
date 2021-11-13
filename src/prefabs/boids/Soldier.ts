@@ -63,25 +63,8 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
         let formW = (formation.gridW-1)*30;
         this.groupCenter = new Phaser.Math.Vector2(0,0)
 
-          //  Create a Rectangle
-        let rectangle = new Phaser.Geom.Rectangle(-formW,-formH,formH,formW);
-        
-        for(let i = 0;i<formation.gridH;i++){
-            for(let j = 0;j<formation.gridW;j++){
-                let spawPosX = i*formation.distanceBetweenSoldiers;
-                let spawPosY = j*formation.distanceBetweenSoldiers;
-                let position = new Phaser.Math.Vector2(spawPosX,spawPosY);
-                //position.normalize();
-                //position.rotate(Phaser.Math.DEG_TO_RAD*formation.rotation);
-                //position.scale(200);
-                //position.add(new Phaser.Math.Vector2(posx,posy));
-                let point = new Phaser.Geom.Point();
-                rectangle.getRandomPoint(point);
-                var ce = new ControllableEntity(scene, position.x,position.y, "characters", 2)
-                this.controllableEntities.push(ce)
-                this.add(ce);
-            }
-        }   
+      
+           
         this.graphics = scene.add.graphics({
             x:0,
             y:0
@@ -92,19 +75,22 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
         this.nrOfControllableEntities = this.controllableEntities.length;
         
         scene.physics.world.enable(this);
-        //this.shootZone = scene.add.zone(-formH/2,-formH/2,5*formH,5*formW);
-        //scene.physics.world.enable(this.shootZone);
-        //this.add(this.shootZone);
+         
         let shootRangeRadius = 200;
-        this.shootRange = scene.physics.add.image(-formH/2-shootRangeRadius/2,-formH/2-shootRangeRadius/2,null);
+        this.shootRange = scene.physics.add.image(0,0,null);
         this.shootRange.setVisible(false);
         scene.physics.world.enable(this.shootRange);
         this.add(this.shootRange);
-        
         this.shootRange.setCircle(shootRangeRadius,0,0);    
+
+        const soldier_animated = this.scene.add.sprite(0,0,'player_sprites',0);
+        soldier_animated.setOrigin(0,0);
+        soldier_animated.setScale(6);
+        soldier_animated.play('player_hit');
+        this.add(soldier_animated);
     
         this.arcadePhysicsBody = this.body as Phaser.Physics.Arcade.Body;
-        this.arcadePhysicsBody.setCircle(formH,-formH/2,-formH/2);
+        this.arcadePhysicsBody.setCircle(formH/2,0,0);
 
         scene.add.existing(this);
         this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);

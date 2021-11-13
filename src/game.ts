@@ -10,17 +10,23 @@ const config = {
     // TODO: OnResize
 	width:  window.innerWidth * window.devicePixelRatio,
 	height: window.innerHeight * window.devicePixelRatio,
+	
 	scale: {
         mode: Phaser.Scale.RESIZE,
         parent: 'phaser-example',
         width: '100%',
-        height: '100%'
+        height: '100%',
+		
+    },
+	render: {
+        antialias: false,
+        pixelArt: true,
+        roundPixels: true
     },
     physics: {
 		default: "arcade",
 		arcade: {
 			gravity: { y: 0 },
-			debug: true,
 		},
 	},
     scene: [BootScene, TitleScene, GameScene, UIScene],

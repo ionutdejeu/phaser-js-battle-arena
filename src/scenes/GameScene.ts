@@ -8,17 +8,17 @@ import { Subject } from "rxjs";
 import { GameObjects } from "phaser";
 import { ProjectileManager } from "../prefabs/projectiles/projectileManager";
 import { BoidManager } from "../prefabs/boids/boidsManager";
+import { PlayerGroup } from "../prefabs/player/playerGroup";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
 
-	player;
-	keys: object;
+
 	keyboardController:KeyboardInputController;
 	wall: Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
 	chests: Phaser.Physics.Arcade.Group;
 	goldPickupAudio: Phaser.Sound.BaseSound;
-	controlGroup:ControllableGroup
+ 	_playerGroup:PlayerGroup;
 	sceneUpdateObservable:Subject<void>;
 	graphics:Phaser.GameObjects.Graphics;
 	projManager: ProjectileManager;
@@ -41,43 +41,80 @@ export default class GameScene extends Phaser.Scene {
 		//this.graphics.strokeRect(0,0,this.scale.width,this.scale.height);
 		this.projManager = new ProjectileManager(this);
 		this.boidManager = new BoidManager(this);
-		this.boidManager.init(400);
-		this.boidManager.initAttractors(2,400)
+		this.boidManager.init(500);
+	 
+		this.boidManager.initAttractors(1,500)
+
+		const config = {
+            key: 'player_all',
+            frames: 'player_sprites',
+            frameRate: .5,
+            repeat: -1,
+            repeatDelay: 2000,
+			duration:100
+        };
+		this.anims.create(config)
+		this.anims.create({
+			key:"player_idle",
+			frames: this.anims.generateFrameNumbers('player_sprites',{
+				frames:[0,1]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
+		this.anims.create({
+			key:"player_hit",
+			frames: this.anims.generateFrameNumbers('player_sprites',{
+				frames:[1,2]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
+		this.anims.create({
+			key:"player_walk",
+			frames: this.anims.generateFrameNumbers('player_sprites',{
+				frames:[3,4]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
 
 		
 		this.createAudio();
 		this.createWalls();
 		this.createChests();
-		this.createPlayer();
-		this.addCollisions();
-		this.createInput();
+
 		this.createGroup();
-	 
+		 
 	
 	 
 
-		this.physics.add.collider(this.player,this.controlGroup);
 		this.sceneUpdateObservable = new Subject();
 		this.keyboardController = new KeyboardInputController(this.sceneUpdateObservable.asObservable(),this);
 		inputManagerInstance.add_keyboard_controller(this,this.keyboardController);
 
 		inputManagerInstance.onAxisChangedObservable.subscribe((newValues)=>{
-			this.controlGroup.update_virtual(newValues);
-			this.player.update_virtual(newValues);
+			this._playerGroup.update_virtual(newValues);
 		});
 		
-		this.cameras.main.startFollow(this.controlGroup);
+		this.cameras.main.startFollow(this._playerGroup);
 		
 		//this.graphics.strokePath();
 
 	
-		this.physics.add.collider(this.boidManager.getBoidCollisionGroup(),this.controlGroup);
-		this.physics.add.overlap(this.boidManager.getBoidCollisionGroup(),this.controlGroup.shootRange,
+		this.physics.add.collider(this.boidManager.getBoidCollisionGroup(),this._playerGroup);
+		this.physics.add.overlap(this.boidManager.getBoidCollisionGroup(),this._playerGroup.shootRange,
 			(obj1,obj2:GameObjects.GameObject)=>{
-			this.controlGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
+			this._playerGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
 		 });
 		this.projManager.setupCollisionWithEnemeis(this.boidManager);
-		this.boidManager.followPlayer(this.controlGroup)
+		this.boidManager.followPlayer(this._playerGroup)
 		this.sceneUpdateObservable.next();
 	}
 
@@ -93,22 +130,13 @@ export default class GameScene extends Phaser.Scene {
 		  
 	}
 
-	createPlayer() {
-		this.player = new Player(this, 200, 200, "characters", 0);
-	}
+	 
 
 	createGroup(){
-		this.controlGroup = new ControllableGroup(this,0,0,this.projManager);
+ 		this._playerGroup = new PlayerGroup(this,0,0,this.projManager);
 	}
 
-	createInput() {
-		this.keys = this.input.keyboard.addKeys({
-			up: Phaser.Input.Keyboard.KeyCodes.W,
-			down: Phaser.Input.Keyboard.KeyCodes.S,
-			left: Phaser.Input.Keyboard.KeyCodes.A,
-			right: Phaser.Input.Keyboard.KeyCodes.D,
-		});
-	}
+	 
 
 	createWalls() {
 		this.wall = this.physics.add.image(500, 100, "button1");
@@ -116,19 +144,7 @@ export default class GameScene extends Phaser.Scene {
 		this.wall.setImmovable();
 	}
 
-	addCollisions() {
-		this.physics.add.collider(this.player, this.wall);
-		
-
-		this.physics.add.overlap(
-			this.player,
-			this.chests,
-			this.collectChest,
-			null,
-			this
-		);
-	}
-
+	 
 	createAudio() {
 		this.goldPickupAudio = this.sound.add("goldSound");
 	}

@@ -46,21 +46,23 @@ class BoidPoolCacheData{
 
     activate(index:integer){
         this.liveObjects[index] = true;
+        this.liveObjectsCount ++;
         this.boidsObjects[index].setActive(true);
         this.boidsObjects[index].setVisible(true);
-        this.boidsObjects[index].body.checkCollision.down = true;
-        this.boidsObjects[index].body.checkCollision.up = true;
-        this.boidsObjects[index].body.checkCollision.left = true;
-        this.boidsObjects[index].body.checkCollision.right = true;
+        this.boidsObjects[index].body.enable = true;
+        this.boidsObjects[index].body.checkCollision.none = false;
+        this.collisionGroup.add(this.boidsObjects[index]);
     }
 
     deactivate(index:integer){
         this.liveObjects[index] = false;
+        this.liveObjectsCount--;
         this.boidsObjects[index].setVelocity(0,0);
         this.boidsObjects[index].setActive(false);
         this.boidsObjects[index].setVisible(false);
         this.boidsObjects[index].body.enable = false
         this.boidsObjects[index].body.checkCollision.none = true;
+        
     }
 }
 export class BoidManager implements IBoidManager{
@@ -70,7 +72,7 @@ export class BoidManager implements IBoidManager{
     _attractorsCachedData:BoidPoolCacheData;
     _repelersCachedData:BoidPoolCacheData;
     _zeroPoint = new Phaser.Geom.Point(0, 0);
-
+    
 
     constructor(sc:Phaser.Scene){
         this._scene = sc
@@ -114,8 +116,9 @@ export class BoidManager implements IBoidManager{
         }
     }
     spawn(posx: any, posy: any): Phaser.Physics.Arcade.Sprite {
-        if(this._boidsData.liveObjectsCount == this._boidsData.poolSize)
+        if(this._boidsData.liveObjectsCount == this._boidsData.poolSize){
             return;
+        }
         let firstInactiveIndex = 0;
         for(let i = 0;i<this._boidsData.liveObjectsCount;i++){
             if(this._boidsData.liveObjects[i]==false){
@@ -126,8 +129,6 @@ export class BoidManager implements IBoidManager{
         this._boidsData.boidsObjects[firstInactiveIndex].x = posx
         this._boidsData.boidsObjects[firstInactiveIndex].y = posy
         this._boidsData.activate(firstInactiveIndex)
-        this._boidsData.liveObjects[firstInactiveIndex] = true;
-        this._boidsData.liveObjectsCount++;
         return this._boidsData.boidsObjects[firstInactiveIndex];
       
     }
@@ -150,12 +151,12 @@ export class BoidManager implements IBoidManager{
     }
 
     update(){
+        var computedCount = 0;
         //compute distances between all boids
         for(let i =0;i<this._boidsData.poolSize;i++){
 			for(let j=0;j<i;j++){
                 if(this._boidsData.liveObjects[i] == true 
                     && this._boidsData.liveObjects[j]==true){
-                        
 				    let dist = 
                     Phaser.Math.Distance.BetweenPointsSquared(
                         this._boidsData.boidsObjects[i], 
@@ -163,10 +164,11 @@ export class BoidManager implements IBoidManager{
                     
                     this._boidsData.boidCachedDistances[i*this._boidsData.poolSize+j] = dist
                     this._boidsData.boidCachedDistances[j*this._boidsData.poolSize+i] = dist
-
+                    computedCount ++;
                 }
 			}
-		}       
+		}
+             
         // compute distance between boids and list of attractors 
         if(this._attractorsCachedData.shouldProcesBoidData()){
             for(let i=0;i<this._attractorsCachedData.poolSize;i++){
@@ -207,11 +209,11 @@ export class BoidManager implements IBoidManager{
 			var [f3x,f3y] = this.alignement_f(i);            
 			var [f4x,f4y] = this.seek_targets_f(i);
             
-            //console.log(f41x,f41y);
-			var coef1 = 10.0;
-			var coef2 = 10.0;
-			var coef3 = 2.0;
-            var coef4 = 10.75;
+
+			var coef1 = 1;
+			var coef2 = 1;
+			var coef3 = 1;
+            var coef4 = 10;
            
             
 			var newAcc = new Phaser.Math.Vector2(
@@ -221,10 +223,17 @@ export class BoidManager implements IBoidManager{
 			var newVelocity = new Phaser.Math.Vector2(boid.body.velocity.x + newAcc.x, boid.body.velocity.y + newAcc.y);
 			boid.setVelocity(newVelocity.x, newVelocity.y);		
 			//turn in the right direction
-			boid.setAngle(this.computeAngle(boid.body.velocity));
+            let angle = this.computeAngle(newVelocity)
+        
+            if (Math.abs(angle) >= 90){
+                boid.setFlipX(false);
+                
+            }else{
+                boid.setFlipX(true);
+            }
 		}
     }
-
+    
     init(maxNurBoids?: integer): void {
         
         this._boidsData.init(maxNurBoids,maxNurBoids**2,maxNurBoids);
@@ -313,10 +322,15 @@ export class BoidManager implements IBoidManager{
 				closeBoids.push(this._boidsData.boidsObjects[i]);
 			}
 		}
+        if (closeBoids.length == 0) {
+			return [0,0];
+		}
         var force = Phaser.Geom.Point.GetCentroid(closeBoids);
         force.x=force.x-this._boidsData.boidsObjects[boid_index].x;
         force.y=force.y-this._boidsData.boidsObjects[boid_index].y;
+        
         let len = Math.hypot(force.x,force.y);
+        if (len == 0) return [0,0];
         return [force.x/len,force.y/len];
 	};
 
@@ -336,7 +350,7 @@ export class BoidManager implements IBoidManager{
         force.x=this._boidsData.boidsObjects[boid_index].x-force.x;
         force.y=this._boidsData.boidsObjects[boid_index].y-force.y;
         let len = Math.hypot(force.x,force.y);
-
+        if (len == 0) return [0,0];
         return [force.x/len,force.y/len];
 	};
 	separation(boid_index) {
@@ -452,7 +466,7 @@ export class BoidManager implements IBoidManager{
         for(let i=0;i<this._boidsData.boidsObjects.length;i++){
             if(boid == this._boidsData.boidsObjects[i]){
                 this._boidsData.deactivate(i);
-               
+                
             }
         }
 	}
