@@ -21,34 +21,12 @@ export default class BootScene extends Phaser.Scene {
 		 
 		this.load.spritesheet('boom', 'assets/sheets/explosion.png', { frameWidth: 64, frameHeight: 64, endFrame: 23 });
 		this.load.spritesheet('player_sprites', 'assets/sheets/player_sheet.png', { frameWidth: 16, frameHeight: 16 });
-		
-		//this.load.atlas('player_anim', 'assets/sheets/player_sheet.png', 'assets/sheets/player_sheet.json');
-		 // Animation set	
-		
+		this.load.spritesheet("bot", "assets/sheets/bot.png",{ frameWidth: 16, frameHeight: 16 });
+		this.load.spritesheet("cross_hair", "assets/sheets/cross_hair.png",{ frameWidth: 16, frameHeight: 16 });
+
 		 
-		//this.anims.create({
-        //    key: 'player_idle',
-        //    frames: this.anims.generateFrameNames('player_anim',{prefix:"player_idle_"}),
-        //    frameRate: 8,
-        //    repeat: -1
-        //});
-		//
-		// // Animation set
-		// this.anims.create({
-        //    key: 'player_damage',
-        //    frames: this.anims.generateFrameNames('player_anim', {prefix:"player_damage_"}),
-        //    frameRate: 8,
-        //    repeat: -1
-        //});
-//
-		// // Animation set
-		//this.anims.create({
-        //    key: 'player_walk',
-        //    frames: this.anims.generateFrameNames('player_anim', {prefix:"player_walk_"}),
-        //    frameRate: 8,
-        //    repeat: -1
-        //});
 		console.log(this.anims);
+		this.load.image("ground_tile", "assets/images/ground_tile.png");
 
 		this.load.image("button1", "assets/images/ui/blue_button01.png");
 		this.load.image("button2", "assets/images/ui/blue_button02.png");

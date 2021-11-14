@@ -76,6 +76,16 @@ export class BoidManager implements IBoidManager{
 
     constructor(sc:Phaser.Scene){
         this._scene = sc
+        this._scene.anims.create({
+			key:"bot_move",
+			frames: this._scene.anims.generateFrameNumbers('bot',{
+				frames:[0,1]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
         this._boidsData = new BoidPoolCacheData();
         this._attractorsCachedData = new BoidPoolCacheData();
         this._repelersCachedData = new BoidPoolCacheData();
@@ -242,9 +252,10 @@ export class BoidManager implements IBoidManager{
         for(var i = 0; i < maxNurBoids; i++){
 			var randomX = Phaser.Math.Between(0, window.innerWidth*devicePixelRatio - 1);
 			var randomY = Phaser.Math.Between(0, window.innerHeight*devicePixelRatio - 1);
-			let boid = this._scene.physics.add.sprite(randomX, randomY, 'items');
+			let boid = this._scene.physics.add.sprite(randomX, randomY, 'bot');
+            boid.setScale(1+1/devicePixelRatio);
 			boid.setVelocity(randomX*0.001, randomY*0.001);
-			
+			boid.play('bot_move');
 			this._boidsData.collisionGroup.add(boid);
 			// Physics
 			this._scene.physics.world.enable(boid);

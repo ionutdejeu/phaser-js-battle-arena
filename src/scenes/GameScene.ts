@@ -9,6 +9,7 @@ import { GameObjects } from "phaser";
 import { ProjectileManager } from "../prefabs/projectiles/projectileManager";
 import { BoidManager } from "../prefabs/boids/boidsManager";
 import { PlayerGroup } from "../prefabs/player/playerGroup";
+import { IWorldManager, WorldManager } from "../prefabs/world/worldManager";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
@@ -23,6 +24,7 @@ export default class GameScene extends Phaser.Scene {
 	graphics:Phaser.GameObjects.Graphics;
 	projManager: ProjectileManager;
 	boidManager: BoidManager;
+	worldManager:IWorldManager;
 
 	constructor() {
 		super("Game"); // Name of the scene
@@ -44,46 +46,8 @@ export default class GameScene extends Phaser.Scene {
 		this.boidManager.init(500);
 	 
 		this.boidManager.initAttractors(1,500)
-
-		const config = {
-            key: 'player_all',
-            frames: 'player_sprites',
-            frameRate: .5,
-            repeat: -1,
-            repeatDelay: 2000,
-			duration:100
-        };
-		this.anims.create(config)
-		this.anims.create({
-			key:"player_idle",
-			frames: this.anims.generateFrameNumbers('player_sprites',{
-				frames:[0,1]
-			}),
-			frameRate: 3,
-            repeat: -1,
-            repeatDelay: 0,
-			duration:100
-		})
-		this.anims.create({
-			key:"player_hit",
-			frames: this.anims.generateFrameNumbers('player_sprites',{
-				frames:[1,2]
-			}),
-			frameRate: 3,
-            repeat: -1,
-            repeatDelay: 0,
-			duration:100
-		})
-		this.anims.create({
-			key:"player_walk",
-			frames: this.anims.generateFrameNumbers('player_sprites',{
-				frames:[3,4]
-			}),
-			frameRate: 3,
-            repeat: -1,
-            repeatDelay: 0,
-			duration:100
-		})
+		this.worldManager = new WorldManager(this);
+		this.worldManager.create();
 
 		
 		this.createAudio();

@@ -25,6 +25,8 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
     shootTimer:Phaser.Time.TimerEvent;
     _projManager:IPorjectileManager;
     _playerSprite:Phaser.GameObjects.Sprite;
+    _crossHairSprite:Phaser.GameObjects.Sprite;
+    
     animation_state:string = 'player_idle'
 
     constructor(scene: Phaser.Scene, x: number, y: number,projManager:IPorjectileManager)
@@ -34,7 +36,46 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
         this.relative_coordinates = [];
       
  
-           
+        this.scene.anims.create({
+			key:"player_idle",
+			frames: this.scene.anims.generateFrameNumbers('player_sprites',{
+				frames:[0,1]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
+		this.scene.anims.create({
+			key:"player_hit",
+			frames: this.scene.anims.generateFrameNumbers('player_sprites',{
+				frames:[1,2]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
+		this.scene.anims.create({
+			key:"player_walk",
+			frames: this.scene.anims.generateFrameNumbers('player_sprites',{
+				frames:[3,4]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
+        this.scene.anims.create({
+			key:"cross_hair_anim",
+			frames: this.scene.anims.generateFrameNumbers('cross_hair',{
+				frames:[0,1]
+			}),
+			frameRate: 3,
+            repeat: -1,
+            repeatDelay: 0,
+			duration:100
+		})
         this.graphics = scene.add.graphics({
             x:0,
             y:0
@@ -57,7 +98,13 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
         this._playerSprite.setScale(5);
         this._playerSprite.play('player_hit');
         this.add(this._playerSprite);
-    
+        
+        this._crossHairSprite = this.scene.add.sprite(0,0,'player_sprites',0);
+        this._crossHairSprite.setVisible(false);
+        this._crossHairSprite.setScale(3);
+        
+        this.add(this._crossHairSprite);
+        
         this.arcadePhysicsBody = this.body as Phaser.Physics.Arcade.Body;
         this.arcadePhysicsBody.setCircle(this._playerSprite.displayWidth/2,0,0);
         this.shootRange.setCircle(shootRangeRadius,-shootRangeRadius/2-this._playerSprite.displayWidth/2,-shootRangeRadius/2-this._playerSprite.displayWidth/2);    
@@ -123,6 +170,12 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
         this.graphics.clear();
         this.targetX = x
         this.targetY = y
+        this._crossHairSprite.setVisible(true);
+        this._crossHairSprite.x = this.targetX;
+        this._crossHairSprite.y = this.targetY;
+        
+        this._crossHairSprite.play('cross_hair_anim',true);
+        
         let invToPos = this.tempMatrix.applyInverse(x,y);
         let invFromPos = this.tempParentMatrix.applyInverse(this.x,this.y);
 
