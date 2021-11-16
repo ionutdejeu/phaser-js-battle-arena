@@ -136,6 +136,10 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
             this.animation_state = animation_key
         }
     }
+    update_collisions(){
+        
+    }
+
     
     update_virtual(direction:Phaser.Math.Vector2){
 		if (direction.lengthSq()>0){
@@ -165,8 +169,10 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
 		var angleRad = Phaser.Math.Angle.BetweenPoints(zeroPoint, velocity);
 		return Phaser.Math.RadToDeg(angleRad);
 	};
-
-    draw_target_line(x,y,updateObservable:Observable<void>){
+    targetObject(gameObj:Phaser.GameObjects.GameObject){
+        this.drawTargetLine(gameObj.body.position.x,gameObj.body.position.y,null);
+    }
+    drawTargetLine(x,y,updateObservable:Observable<void>){
         this.graphics.clear();
         this.targetX = x
         this.targetY = y
@@ -179,7 +185,7 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
         let invToPos = this.tempMatrix.applyInverse(x,y);
         let invFromPos = this.tempParentMatrix.applyInverse(this.x,this.y);
 
-        this.graphicsTargetLine.setTo(invFromPos.x,invFromPos.y,invToPos.x,invToPos.y);
+        this.graphicsTargetLine.setTo(this.x,this.y,invToPos.x,invToPos.y);
         this.graphics.strokeLineShape(this.graphicsTargetLine);
         
     }

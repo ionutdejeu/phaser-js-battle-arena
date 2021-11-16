@@ -10,6 +10,7 @@ export class ProjectileManager implements IPorjectileManager{
     _scene:Phaser.Scene;
     _collisionGroup:Phaser.Physics.Arcade.Group;
     _explosionGroup:Phaser.GameObjects.Group;
+
     constructor(sc:Phaser.Scene){
         this._scene = sc;
         this._collisionGroup = sc.physics.add.group() as Phaser.Physics.Arcade.Group;
@@ -45,7 +46,7 @@ export class ProjectileManager implements IPorjectileManager{
     }
     
      
-
+     
     spawn(spawnPosx,spawnPosY,directionX,directionY){
         let bullet = this._scene.physics.add.sprite(spawnPosx,spawnPosY,'bullet')
         this._collisionGroup.add(bullet);

@@ -6,6 +6,7 @@ export interface IBoidManager{
     deactivateBoid(boid:Phaser.Physics.Arcade.Sprite);
     spawn(posx,posy):Phaser.Physics.Arcade.Sprite;
     spawnAttractor(sprite:Phaser.Physics.Arcade.Sprite):void;
+    getClosestBoidTo(gameObj:Phaser.GameObjects.GameObject);
     deactivateAttractor(attractor:Phaser.Physics.Arcade.Sprite):void
     getBoidCollisionGroup();
     getAttractorsColisionGroup();
@@ -159,10 +160,13 @@ export class BoidManager implements IBoidManager{
     setupCollisionWith(group:Phaser.GameObjects.Group){
         this._scene.physics.add.collider(this._boidsData.collisionGroup,group);
     }
-
+    getClosestBoidTo(playerObject:Phaser.GameObjects.GameObject){
+        return this._scene.physics.closest(playerObject,this._boidsData.collisionGroup.getChildren());
+    }
     update(){
         var computedCount = 0;
         //compute distances between all boids
+        this._boidsData.collisionGroup.off
         for(let i =0;i<this._boidsData.poolSize;i++){
 			for(let j=0;j<i;j++){
                 if(this._boidsData.liveObjects[i] == true 

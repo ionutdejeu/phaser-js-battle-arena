@@ -5,7 +5,7 @@ import {ControllableGroup} from "../prefabs/boids/Soldier";
 import Chest from "../prefabs/Chest";
 import {inputManagerInstance,KeyboardInputController} from "../prefabs/InputManager";
 import { Subject } from "rxjs";
-import { GameObjects } from "phaser";
+import { GameObjects, Physics } from "phaser";
 import { ProjectileManager } from "../prefabs/projectiles/projectileManager";
 import { BoidManager } from "../prefabs/boids/boidsManager";
 import { PlayerGroup } from "../prefabs/player/playerGroup";
@@ -73,10 +73,10 @@ export default class GameScene extends Phaser.Scene {
 
 	
 		this.physics.add.collider(this.boidManager.getBoidCollisionGroup(),this._playerGroup);
-		this.physics.add.overlap(this.boidManager.getBoidCollisionGroup(),this._playerGroup.shootRange,
-			(obj1,obj2:GameObjects.GameObject)=>{
-			this._playerGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
-		 });
+		//this.physics.add.overlap(this.boidManager.getBoidCollisionGroup(),this._playerGroup.shootRange,
+		//	(obj1,obj2:GameObjects.GameObject)=>{
+		//	this._playerGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
+		// });
 		this.projManager.setupCollisionWithEnemeis(this.boidManager);
 		this.boidManager.followPlayer(this._playerGroup)
 		this.sceneUpdateObservable.next();
@@ -85,6 +85,9 @@ export default class GameScene extends Phaser.Scene {
   
 
 	update() {
+		this._playerGroup.targetObject(
+			this.boidManager.getClosestBoidTo(this._playerGroup) as Physics.Arcade.Sprite
+		);
 		this.sceneUpdateObservable.next();
 		this.boidManager.update();
 		
