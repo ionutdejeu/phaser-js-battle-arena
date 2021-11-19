@@ -1,3 +1,4 @@
+import { IProjectileManager } from "./projectileManager";
 
 
 export interface projectileInfo{
@@ -5,6 +6,6 @@ export interface projectileInfo{
     isHoming:boolean
     texture:string
 }
-export const createBullet=(scene:Phaser.Scene,velocity:number)=>{
+export const createBullet=(projectielManager:IProjectileManager,velocity:number)=>{
     return null;
 }   

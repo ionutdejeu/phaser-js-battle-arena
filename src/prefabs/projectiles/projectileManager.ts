@@ -1,12 +1,12 @@
 import { IBoidManager } from "../boids/boidsManager";
 
 
-export interface IPorjectileManager{
+export interface IProjectileManager{
     setupCollisionWithEnemeis(boidManager:IBoidManager):void;
     spawn(spawnPosx,spawnPosY,directionX,directionY):void;
 }
 
-export class ProjectileManager implements IPorjectileManager{
+export class ProjectileManager implements IProjectileManager{
     _scene:Phaser.Scene;
     _collisionGroup:Phaser.Physics.Arcade.Group;
     _explosionGroup:Phaser.GameObjects.Group;
