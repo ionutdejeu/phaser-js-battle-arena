@@ -119,7 +119,6 @@ export class BoidManager implements IBoidManager{
         this._boidsData.collisionGroup.remove(boid);
     }
     spawnAtRandom(){
-        console.log('spawn 10');
         for(let i = 0;i<10;i++){
             var randomX = Phaser.Math.Between(0, 2*window.innerWidth*devicePixelRatio - 1);
 		    var randomY = Phaser.Math.Between(0, 2*window.innerHeight*devicePixelRatio - 1);
@@ -215,7 +214,6 @@ export class BoidManager implements IBoidManager{
 			if(!this._boidsData.liveObjects[i]){
                 continue;
             }
-            //console.log(this._boidsData.liveObjectsCount);
 			let boid = this._boidsData.boidsObjects[i];
             
 			var [f1x,f1y] = this.cohesion_f(i);

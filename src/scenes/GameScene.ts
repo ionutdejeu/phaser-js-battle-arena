@@ -10,6 +10,7 @@ import { ProjectileManager } from "../prefabs/projectiles/projectileManager";
 import { BoidManager } from "../prefabs/boids/boidsManager";
 import { PlayerGroup } from "../prefabs/player/playerGroup";
 import { IWorldManager, WorldManager } from "../prefabs/world/worldManager";
+import { EnemyManager, IEnemyManager } from "../prefabs/boids/enemyManager";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
@@ -25,6 +26,8 @@ export default class GameScene extends Phaser.Scene {
 	projManager: ProjectileManager;
 	boidManager: BoidManager;
 	worldManager:IWorldManager;
+	enemyManager:IEnemyManager;
+	
 
 	constructor() {
 		super("Game"); // Name of the scene
@@ -36,6 +39,7 @@ export default class GameScene extends Phaser.Scene {
 		this.score = 0;
 		this.scene.launch("UI");
 		this.scene.launch("BezierScene");
+		this.graphics = this.add.graphics();
 	 
 	}
 
@@ -45,9 +49,12 @@ export default class GameScene extends Phaser.Scene {
 		this.boidManager = new BoidManager(this);
 		this.boidManager.init(500);
 	 
-		this.boidManager.initAttractors(1,500)
+		this.boidManager.initAttractors(2,500)
 		this.worldManager = new WorldManager(this);
 		this.worldManager.create();
+		this.enemyManager = new EnemyManager(this);
+		this.enemyManager.init(10);
+
 
 		
 		this.createAudio();
@@ -80,6 +87,8 @@ export default class GameScene extends Phaser.Scene {
 		this.projManager.setupCollisionWithEnemeis(this.boidManager);
 		this.boidManager.followPlayer(this._playerGroup)
 		this.sceneUpdateObservable.next();
+		this.enemyManager.spawnAtRandom(this._playerGroup);
+		//this.boidManager.spawnAttractor
 	}
 
   
@@ -90,9 +99,11 @@ export default class GameScene extends Phaser.Scene {
 		);
 		this.sceneUpdateObservable.next();
 		this.boidManager.update();
-		
+		this.enemyManager.update()
+		this.graphics.clear()
+		this.enemyManager.draw(this.graphics);
 	 
-		 
+		
 		
 		  
 	}

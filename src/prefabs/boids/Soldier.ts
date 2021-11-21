@@ -1,6 +1,6 @@
 import { Observable, Subject } from 'rxjs'
-import { IPorjectileManager } from '../projectiles/projectileManager'
 import { PlayerAttackStats, PlayerBodyStats, PlayerDefenceStats } from '../player/stats'
+import { IProjectileManager } from '../projectiles/projectileManager'
 
 const formation = { 
     gridW:4,
@@ -45,10 +45,10 @@ export class ControllableGroup extends Phaser.GameObjects.Container{
     targetX:number
     targetY:number
     shootTimer:Phaser.Time.TimerEvent;
-    _projManager:IPorjectileManager;
+    _projManager:IProjectileManager;
 
 
-    constructor(scene: Phaser.Scene, x: number, y: number,projManager:IPorjectileManager)
+    constructor(scene: Phaser.Scene, x: number, y: number,projManager:IProjectileManager)
 	{  
         super(scene,x,y)
         this._projManager = projManager;

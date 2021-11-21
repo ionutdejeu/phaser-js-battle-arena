@@ -1,8 +1,5 @@
 
-
-
-
-export class BaseProjectile extends Phaser.GameObjects.GameObject{
-    visual:Phaser.Physics.Arcade.Sprite;
-     
+export interface BaseProjectile{
+    object:Phaser.Physics.Arcade.Sprite;
+    update();
 }

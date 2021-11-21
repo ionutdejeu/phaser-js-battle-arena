@@ -22,10 +22,10 @@ export default class BootScene extends Phaser.Scene {
 		this.load.spritesheet('boom', 'assets/sheets/explosion.png', { frameWidth: 64, frameHeight: 64, endFrame: 23 });
 		this.load.spritesheet('player_sprites', 'assets/sheets/player_sheet.png', { frameWidth: 16, frameHeight: 16 });
 		this.load.spritesheet("bot", "assets/sheets/bot.png",{ frameWidth: 16, frameHeight: 16 });
-		this.load.spritesheet("cross_hair", "assets/sheets/cross_hair.png",{ frameWidth: 16, frameHeight: 16 });
+		this.load.spritesheet("bigBot", "assets/sheets/pngegg.png",{ frameWidth: 50, frameHeight: 50 });
 
+		this.load.spritesheet("cross_hair", "assets/sheets/cross_hair.png",{ frameWidth: 16, frameHeight: 16 });
 		 
-		console.log(this.anims);
 		this.load.image("ground_tile", "assets/images/ground_tile.png");
 
 		this.load.image("button1", "assets/images/ui/blue_button01.png");

@@ -1,9 +1,12 @@
 import { Observable, Subject } from 'rxjs'
-import { IPorjectileManager } from '../projectiles/projectileManager'
+import { IProjectileManager } from '../projectiles/projectileManager'
 import { PlayerAttackStats, PlayerBodyStats, PlayerDefenceStats } from './stats'
  
-
-export class PlayerGroup extends Phaser.GameObjects.Container{
+export interface IPlayer{
+    getX();
+    getY();
+}
+export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer{
     
     relative_coordinates:Array<Phaser.Math.Vector2> 
      
@@ -23,13 +26,13 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
     targetX:number
     targetY:number
     shootTimer:Phaser.Time.TimerEvent;
-    _projManager:IPorjectileManager;
+    _projManager:IProjectileManager;
     _playerSprite:Phaser.GameObjects.Sprite;
     _crossHairSprite:Phaser.GameObjects.Sprite;
     
     animation_state:string = 'player_idle'
 
-    constructor(scene: Phaser.Scene, x: number, y: number,projManager:IPorjectileManager)
+    constructor(scene: Phaser.Scene, x: number, y: number,projManager:IProjectileManager)
 	{  
         super(scene,x,y)
         this._projManager = projManager;
@@ -122,6 +125,12 @@ export class PlayerGroup extends Phaser.GameObjects.Container{
         });
         
         
+    }
+    getX() {
+        return this.x;
+    }
+    getY() {
+        return this.y;
     }
     
     shootProjectile(){
