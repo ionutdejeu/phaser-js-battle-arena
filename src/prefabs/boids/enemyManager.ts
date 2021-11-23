@@ -5,20 +5,29 @@ export interface EnemySettingsStruct{
     texture:string;
     velocity:number;
     attackRangeSquared:number;
-    attackChannelingTimeInMs:integer
+    attackSpeed:integer
+}
+
+
+export const EnemyStateEnum = {
+    follow:"follwing",
+    attack:"attacking"
 }
 
 export interface EnemyStruct {
     enabled:boolean
     settings:EnemySettingsStruct
     sprite:Phaser.Physics.Arcade.Sprite
+    state:string,
+    updateStateAfterTimestamp:integer
 }
+
 
 export const genericEnemySettings:EnemySettingsStruct ={
     texture:'random',
     velocity:10,
     attackRangeSquared:100,
-    attackChannelingTimeInMs:500
+    attackSpeed:500
 } 
 
 export interface IEnemyManager{
@@ -68,7 +77,9 @@ export class EnemyManager implements IEnemyManager{
             let estruct:EnemyStruct  = {
                 settings:genericEnemySettings,
                 enabled:false,
-                sprite:sprite
+                sprite:sprite,
+                state:EnemyStateEnum.follow,
+                updateStateAfterTimestamp:Date.now()
             };
             this._enemyMap.set(i,estruct);
         }
@@ -90,6 +101,7 @@ export class EnemyManager implements IEnemyManager{
                 continue;
             }
             let en = this._enemyMap.get(i);
+            
             let dirx = this.target.getX()- en.sprite.body.position.x;
             let diry = this.target.getY()- en.sprite.body.position.y;
 
