@@ -4,6 +4,7 @@ import {inputManagerInstance,VirtualJoyStickController} from '../prefabs/InputMa
 import {AlignGrid} from '../prefabs/AlignGrid'
 import { UIBlock } from '../prefabs/ui/UiBlock';
 import { ItemBar } from '../prefabs/ui/ItemBar';
+import { InGameUiManager, IUiManager } from '../prefabs/ui/inGameUiManager';
 
 
 export class UIScene extends Phaser.Scene {
@@ -16,6 +17,7 @@ export class UIScene extends Phaser.Scene {
 	graphics:Phaser.GameObjects.Graphics;
 	uiGrid:AlignGrid;
 	_itemBar:ItemBar
+	_in_game_menut:IUiManager;
 	constructor() {
 		super("UI"); // Name of the scene
 	}
@@ -26,7 +28,9 @@ export class UIScene extends Phaser.Scene {
 		this.gameScene = this.scene.get("Game");
 		this.scene.bringToTop();
 		this._itemBar = new ItemBar(this);
-		this._itemBar.init();
+		//this._itemBar.init();
+		this._in_game_menut = new InGameUiManager(this);
+		this._in_game_menut.init();
 	}
 
 	create(): void {

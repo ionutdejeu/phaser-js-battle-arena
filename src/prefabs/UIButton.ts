@@ -22,7 +22,7 @@ export default class UIButton extends Phaser.GameObjects.Container {
 		this.hoverkey = hoverkey;
 		this.text = text;
 		this.targetCallBack = targetCallBack;
-
+		
 		this.createButton();
 		this.scene.add.existing(this);
 	}
@@ -50,5 +50,6 @@ export default class UIButton extends Phaser.GameObjects.Container {
 		this.button.on("pointerout", () => {
 			this.button.setTexture(this.key);
 		});
+		//this.setDisplaySize(this.button.width,this.button.height);
 	}
 }

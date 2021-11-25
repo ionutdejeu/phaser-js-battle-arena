@@ -5,6 +5,7 @@ export interface IProjectileManager{
     setupCollisionWithEnemeis(boidManager:IBoidManager):void;
     spawn(spawnPosx,spawnPosY,directionX,directionY):void;
 }
+
 export interface projectileInfo{
     velocity:number,
     isHoming:boolean
@@ -29,7 +30,7 @@ export class ProjectileManager implements IProjectileManager{
     _explosionGroup:Phaser.GameObjects.Group;
     _projectilesTrajectoryGraphics:Phaser.GameObjects.Graphics;
     _projectilesTrajectoryObjects:Array<ProjectileTrajectory> = []
-
+    
         
     constructor(sc:Phaser.Scene){
         this._scene = sc;
@@ -73,6 +74,7 @@ export class ProjectileManager implements IProjectileManager{
     spawnAreaEffectProjectile(textue:string,targetx:number,targety:number){
 
     }
+
     spawnHomingWithTexture(texture:string,target:Phaser.Physics.Arcade.Sprite){
         
     }

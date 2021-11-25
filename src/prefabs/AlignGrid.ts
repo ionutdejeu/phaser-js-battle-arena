@@ -31,8 +31,13 @@ export class AlignGrid {
         //to the x and y of the coordinates
         var x2 = this.cw * xx + this.cw / 2;
         var y2 = this.ch * yy + this.ch / 2;
-        obj.x = x2;
-        obj.y = y2;
+        console.log('h',obj.displayHeight,'w',obj.displayWidth);
+        obj.x = x2 -obj.displayHeight/2;
+        obj.y = y2 -obj.displayWidth/2;
+        //Phaser.Display.Align.In.Center(obj,this.scene,x2,y2)
+        console.log(obj.x,obj.y);
+    
+        
     }
     //mostly for planning and debugging this will
     //create a visual representation of the grid
