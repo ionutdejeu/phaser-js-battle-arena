@@ -36,6 +36,6 @@ export class InGameUiManager extends UIBlock implements IUiManager {
         })
         this._grid.placeAt(4,0,this._menu_button);
         //this._scene.add.existing(this._menu_button);
-        this._grid.draw();
+        //this._grid.draw();
     }
 }

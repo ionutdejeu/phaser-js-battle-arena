@@ -100,6 +100,7 @@ export default class GameScene extends Phaser.Scene {
 		this.sceneUpdateObservable.next();
 		this.boidManager.update();
 		this.enemyManager.update()
+		this.projManager.update();
 		this.graphics.clear()
 		this.enemyManager.draw(this.graphics);
 	 
