@@ -31,10 +31,10 @@ export class InGameUiManager extends UIBlock implements IUiManager {
         this._menu_button = new UIButton(this._scene,0,0,
             "button1",
         "button2",
-        "Start",()=>{
+        "Open Menu",()=>{
             console.log('open menu');
         })
-        this._grid.placeAt(4,0,this._menu_button);
+        this._grid.placeAt(2,0,this._menu_button);
         //this._scene.add.existing(this._menu_button);
         //this._grid.draw();
     }

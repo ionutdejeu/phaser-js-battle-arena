@@ -4,6 +4,5 @@ export class TextButton extends UIBlock {
     constructor(scene:Phaser.Scene) {
         super();
         //add children
-        
     }
 }

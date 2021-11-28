@@ -187,7 +187,6 @@ export class BoidManager implements IBoidManager{
             for(let i=0;i<this._attractorsCachedData.poolSize;i++){
                 if (this._attractorsCachedData.liveObjects[i]){
                     for(let j=0;j<this._boidsData.poolSize;j++){
-                        
                         this._attractorsCachedData.boidCachedDistances[i*this._boidsData.poolSize+j] = 
                         Phaser.Math.Distance.BetweenPointsSquared(
                             this._attractorsCachedData.boidsObjects[i], 
@@ -209,8 +208,7 @@ export class BoidManager implements IBoidManager{
         }
         
         for(let i = 0;i<this._boidsData.poolSize;i++){
-            
-            
+        
 			if(!this._boidsData.liveObjects[i]){
                 continue;
             }
