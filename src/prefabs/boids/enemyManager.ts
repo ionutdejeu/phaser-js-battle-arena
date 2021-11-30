@@ -110,14 +110,12 @@ export class EnemyManager implements IEnemyManager{
                 this.target.getY(),
                 en.sprite.body.position.x,
                 en.sprite.body.position.y)
-
+            
             en.sprite.setVelocity(dirx,diry);
             
         }
     }
-    _drawAimingLines(){
-
-    }
+     
     draw(graphics:Phaser.GameObjects.Graphics){
         graphics.lineStyle(1, 0x00aa00);
         for(let i=0;i<this._poolSize;i++){

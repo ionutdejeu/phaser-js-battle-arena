@@ -12,7 +12,6 @@ export class SustainedExplosion implements BaseProjectile{
     _collisionGroup:Phaser.Physics.Arcade.StaticGroup;
     _explosionCompleteCallback:Function;
     _explosionCompleteCallbackCtx:Function;
-    
 
     constructor(collisionGroup: Phaser.Physics.Arcade.StaticGroup,
         onExplosionComplete?:Function,

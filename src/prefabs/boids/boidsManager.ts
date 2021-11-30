@@ -1,4 +1,4 @@
-import { Vector } from "matter";
+import { PlayerGroup } from "../player/playerGroup";
 
 export interface IBoidManager{
     init(maxNurBoids:integer):void;
@@ -24,7 +24,7 @@ class BoidPoolCacheData{
 	boidsObjects:Array<Phaser.Physics.Arcade.Sprite> = []
     boidCachedDistances:Float64Array;
     timerEvent:Phaser.Time.TimerEvent;
-
+    animationTimeline:Phaser.Tweens.Timeline;
 
     init(poolSize:integer,cachedDataSize:integer,activeCount:integer=0){
         this.poolSize = poolSize;
@@ -39,10 +39,14 @@ class BoidPoolCacheData{
         }
         this.poolSizeSquared = this.poolSize**2;
         this.boidCachedDistances = new Float64Array(cachedDataSize);
+        
     }
 
     shouldProcesBoidData(){
         return this.liveObjectsCount > 0;
+    }
+
+    beginSelfDistruct(callback:Function,callbackCtx:any){
     }
 
     activate(index:integer){
@@ -68,7 +72,9 @@ class BoidPoolCacheData{
 }
 export class BoidManager implements IBoidManager{
     _scene:Phaser.Scene
-    _boindPoolSize:integer
+    _boindPoolSize:integer;
+    _attackRateInMs:integer = 500;
+    _attackRangeSquared:number = 25;
     _boidsData:BoidPoolCacheData;
     _attractorsCachedData:BoidPoolCacheData;
     _repelersCachedData:BoidPoolCacheData;
@@ -86,10 +92,11 @@ export class BoidManager implements IBoidManager{
             repeat: -1,
             repeatDelay: 0,
 			duration:100
-		})
+		});
         this._boidsData = new BoidPoolCacheData();
         this._attractorsCachedData = new BoidPoolCacheData();
         this._repelersCachedData = new BoidPoolCacheData();
+        
 
     }
     followSprite(s:Phaser.Physics.Arcade.Sprite){
@@ -112,6 +119,10 @@ export class BoidManager implements IBoidManager{
         this._attractorsCachedData.liveObjects[firstInactiveIndex] = true;
         this._attractorsCachedData.liveObjectsCount++;
       
+    }
+
+    beginDeactivateBoid(boid: Phaser.Physics.Arcade.Sprite){
+
     }
     
     deactivateBoid(boid: Phaser.Physics.Arcade.Sprite) {
@@ -155,15 +166,38 @@ export class BoidManager implements IBoidManager{
     getRepellersCollisionGroup() {
         return this._repelersCachedData.collisionGroup
     }
-     
-    setupCollisionWith(group:Phaser.GameObjects.Group){
-        this._scene.physics.add.collider(this._boidsData.collisionGroup,group);
+    
+    beginSelfDistruct(boid:Phaser.Physics.Arcade.Sprite){
+        
+        boid.setVelocity(0,0)
+        boid.setMaxVelocity(0,0);
+        
+        let timeline = this._scene.tweens.createTimeline();
+        timeline.add({
+            targets: boid,
+            tint: 0xFFFFFF,
+            ease: 'Power1',
+            duration: 500,
+            onUpdate:()=>{   
+            }
+        });
+        timeline.play();
+
+    }
+    selfDistructCompleted(){
+        
+    }
+
+    setupCollisionWith(targetGroup:PlayerGroup){
+        this._scene.physics.add.collider(this._boidsData.collisionGroup,targetGroup,(player,boid)=>{
+            console.log('collide with player',boid,player);
+            this.beginSelfDistruct(boid as Phaser.Physics.Arcade.Sprite);
+        });
     }
     getClosestBoidTo(playerObject:Phaser.GameObjects.GameObject){
         return this._scene.physics.closest(playerObject,this._boidsData.collisionGroup.getChildren());
     }
     update(){
-        var computedCount = 0;
         //compute distances between all boids
         this._boidsData.collisionGroup.off
         for(let i =0;i<this._boidsData.poolSize;i++){
@@ -177,7 +211,6 @@ export class BoidManager implements IBoidManager{
                     
                     this._boidsData.boidCachedDistances[i*this._boidsData.poolSize+j] = dist
                     this._boidsData.boidCachedDistances[j*this._boidsData.poolSize+i] = dist
-                    computedCount ++;
                 }
 			}
 		}
@@ -254,6 +287,7 @@ export class BoidManager implements IBoidManager{
 			var randomY = Phaser.Math.Between(0, window.innerHeight*devicePixelRatio - 1);
 			let boid = this._scene.physics.add.sprite(randomX, randomY, 'bot');
             boid.setScale(1+1/devicePixelRatio);
+            boid.name = maxNurBoids.toString();
 			boid.setVelocity(randomX*0.001, randomY*0.001);
 			boid.play('bot_move');
 			this._boidsData.collisionGroup.add(boid);
@@ -303,26 +337,7 @@ export class BoidManager implements IBoidManager{
 		return force.normalize()
 
     }
-	cohesion(boid_index) {
-		var closeBoids = [];
-		var radius = 80**2;
-		let boid_i = boid_index*this._boidsData.poolSize;
-		for (let i = 0;i<this._boidsData.poolSize;i++) {
-			if (this._boidsData.liveObjects[i] && 
-                this._boidsData.boidCachedDistances[boid_i+i] < radius) {
-				closeBoids.push(this._boidsData.boidsObjects[i]);
-			}
-		}
-		if (closeBoids.length == 0) {
-			return new Phaser.Math.Vector2(0, 0);
-		}
-		var centroid = Phaser.Geom.Point.GetCentroid(closeBoids);
-		var force = new Phaser.Math.Vector2(
-            centroid.x - this._boidsData.boidsObjects[boid_index].x, 
-            centroid.y - this._boidsData.boidsObjects[boid_index].y)
-       
-		return force.normalize()
-	};
+	 
 	cohesion_f(boid_index) {
 		var closeBoids = [];
 		var radius = 80**2;
@@ -364,24 +379,7 @@ export class BoidManager implements IBoidManager{
         if (len == 0) return [0,0];
         return [force.x/len,force.y/len];
 	};
-	separation(boid_index) {
-		var tooCloseBoids = []
-		var radius = 40**2;
-		let boid_i = boid_index*this._boidsData.poolSize;
-		for (let i = 0;i<this._boidsData.poolSize;i++) {
-			if (this._boidsData.liveObjects[i] && this._boidsData.boidCachedDistances[boid_i+i] < radius) {
-				tooCloseBoids.push(this._boidsData.boidsObjects[i]);
-			}
-		}
-		if (tooCloseBoids.length == 0) {
-		  return new Phaser.Math.Vector2(0, 0);
-		}
-		var centroid = Phaser.Geom.Point.GetCentroid(tooCloseBoids);
-		var force = new Phaser.Math.Vector2(
-			this._boidsData.boidsObjects[boid_index].x - centroid.x, 
-			this._boidsData.boidsObjects[boid_index].y - centroid.y)
-		return force.normalize()
-	};
+	 
 
     seek_targets_f(boid_index){
         var close_targets = []
@@ -435,26 +433,7 @@ export class BoidManager implements IBoidManager{
 		return direction.normalize();
 	}
 
-    alignement(boid_index) {
-		var closeBoids = []
-		var radius = 90**2;
-		let boid_i = boid_index*this._boidsData.poolSize;
-
-		for (let i = 0;i<this._boidsData.poolSize;i++) {
-			if (this._boidsData.liveObjects[i] && this._boidsData.boidCachedDistances[boid_i+i] < radius) {
-				closeBoids.push(this._boidsData.boidsObjects[i].body.velocity);
-			}
-		}
-		if (closeBoids.length == 0) {
-		  return new Phaser.Math.Vector2(0, 0);
-		}
-		//var closeBoidsVelocity = closeBoids.map(function(x) {return x.body.velocity});
-		var centroid = Phaser.Geom.Point.GetCentroid(closeBoids);
-		var force = new Phaser.Math.Vector2(
-			centroid.x - this._boidsData.boidsObjects[boid_index].body.velocity.x, 
-			centroid.y - this._boidsData.boidsObjects[boid_index].body.velocity.y);
-		return force.normalize();
-	};
+     
 
     alignement_f(boid_index) {
 		var closeBoids = []

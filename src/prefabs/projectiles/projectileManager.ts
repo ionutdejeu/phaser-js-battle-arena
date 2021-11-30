@@ -1,4 +1,5 @@
 import { IBoidManager } from "../boids/boidsManager";
+import { ExplosionEvents, ExplosionTypes, IExplosion } from "../explosion/explosionManager";
 import { BaseObjectPool, BaseProjectile} from "./baseProjectile";
 import { SimpleBallisticProjectile, SustainedExplosion } from "./prarabolicProjectile";
 
@@ -73,7 +74,6 @@ export class ProjectileManager implements IProjectileManager{
 
         let objects = [],
         sustained_explosion = [];
-    
         
         for(let i=0;i<100;i++){
             sustained_explosion.push(new SustainedExplosion(
@@ -91,13 +91,21 @@ export class ProjectileManager implements IProjectileManager{
     }
 
     parabolicProjectileLandedHandle(projectile: BaseProjectile){
-       this._parabolicProjectilePool.returnGameObject(projectile)
        let expl=this._sustainedExplosionPool.getGameObject();
-       console.log('expl',expl);
        expl.reset({originX:projectile.getX(),originY:projectile.getY()});
+       this._parabolicProjectilePool.returnGameObject(projectile);
+       let explosion: IExplosion = {
+           type:ExplosionTypes.GENERIC,
+           x:projectile.getX(),
+           y:projectile.getY(),damage:{
+               damage:100
+           },callback:()=>{
+                console.log("Explosion completed");
+           }
+       }
+       this._scene.game.events.emit(ExplosionEvents.SPAWN_EXPLOSION,explosion)
     }
     parabolicExplosionHandler(exp:BaseProjectile){
-        console.log('parabolic handle',exp);
         this._sustainedExplosionPool.returnGameObject(exp);
     }
 

@@ -11,6 +11,7 @@ import { BoidManager } from "../prefabs/boids/boidsManager";
 import { PlayerGroup } from "../prefabs/player/playerGroup";
 import { IWorldManager, WorldManager } from "../prefabs/world/worldManager";
 import { EnemyManager, IEnemyManager } from "../prefabs/boids/enemyManager";
+import { ExplosionManager, IExplosionManager } from "../prefabs/explosion/explosionManager";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
@@ -27,7 +28,7 @@ export default class GameScene extends Phaser.Scene {
 	boidManager: BoidManager;
 	worldManager:IWorldManager;
 	enemyManager:IEnemyManager;
-	
+	explosionManager:IExplosionManager;
 
 	constructor() {
 		super("Game"); // Name of the scene
@@ -54,8 +55,7 @@ export default class GameScene extends Phaser.Scene {
 		this.worldManager.create();
 		this.enemyManager = new EnemyManager(this);
 		this.enemyManager.init(10);
-
-
+		this.explosionManager = new ExplosionManager(this);
 		
 		this.createAudio();
 		this.createWalls();
@@ -79,11 +79,8 @@ export default class GameScene extends Phaser.Scene {
 		//this.graphics.strokePath();
 
 	
-		this.physics.add.collider(this.boidManager.getBoidCollisionGroup(),this._playerGroup);
-		//this.physics.add.overlap(this.boidManager.getBoidCollisionGroup(),this._playerGroup.shootRange,
-		//	(obj1,obj2:GameObjects.GameObject)=>{
-		//	this._playerGroup.draw_target_line(obj2.body.position.x,obj2.body.position.y,this.sceneUpdateObservable);
-		// });
+		//this.physics.add.collider(this.boidManager.getBoidCollisionGroup(),this._playerGroup);
+		this.boidManager.setupCollisionWith(this._playerGroup);
 		this.projManager.setupCollisionWithEnemeis(this.boidManager);
 		this.boidManager.followPlayer(this._playerGroup)
 		this.sceneUpdateObservable.next();

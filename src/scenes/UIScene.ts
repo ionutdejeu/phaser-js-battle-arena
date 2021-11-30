@@ -31,6 +31,7 @@ export class UIScene extends Phaser.Scene {
 		//this._itemBar.init();
 		this._in_game_menut = new InGameUiManager(this);
 		this._in_game_menut.init();
+		
 	}
 
 	create(): void {
@@ -45,7 +46,7 @@ export class UIScene extends Phaser.Scene {
 	}
 
 	setupUIElements(): void {
-		this.scoreText = this.add.text(35, 8, "Coins: 0", {
+		this.scoreText = this.add.text(35, 8, "Parts: 0", {
 			fontSize: "16px",
 			color: "white",
 		});
@@ -67,7 +68,7 @@ export class UIScene extends Phaser.Scene {
 	 
 	setupEvents(): void {
 		this.gameScene.events.on("updateScore", (score: number) => {
-			this.scoreText.setText(`Coins: ${score}`);
+			this.scoreText.setText(`Parts: ${score}`);
 		});
 	}
 }

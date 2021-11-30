@@ -18,7 +18,7 @@ export const projectileVerticalVector = new Phaser.Math.Vector2(-5,0);
 export interface BaseProjectile{
     projectileSprite:Phaser.Physics.Arcade.Sprite;
     explosionSprite:Phaser.Physics.Arcade.Sprite;
-    settings:ProjectileSettings
+    settings:ProjectileSettings;
     reset(t:ProjectileTarget);
     disable();
     draw(graphics:Phaser.GameObjects.Graphics);
