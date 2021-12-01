@@ -190,7 +190,7 @@ export class BoidManager implements IBoidManager{
 
     setupCollisionWith(targetGroup:PlayerGroup){
         this._scene.physics.add.collider(this._boidsData.collisionGroup,targetGroup,(player,boid)=>{
-            console.log('collide with player',boid,player);
+
             this.beginSelfDistruct(boid as Phaser.Physics.Arcade.Sprite);
         });
     }
@@ -287,7 +287,7 @@ export class BoidManager implements IBoidManager{
 			var randomY = Phaser.Math.Between(0, window.innerHeight*devicePixelRatio - 1);
 			let boid = this._scene.physics.add.sprite(randomX, randomY, 'bot');
             boid.setScale(1+1/devicePixelRatio);
-            boid.name = maxNurBoids.toString();
+            boid.name = i.toString();
 			boid.setVelocity(randomX*0.001, randomY*0.001);
 			boid.play('bot_move');
 			this._boidsData.collisionGroup.add(boid);

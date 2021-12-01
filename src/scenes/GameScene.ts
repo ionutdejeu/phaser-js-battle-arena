@@ -12,6 +12,7 @@ import { PlayerGroup } from "../prefabs/player/playerGroup";
 import { IWorldManager, WorldManager } from "../prefabs/world/worldManager";
 import { EnemyManager, IEnemyManager } from "../prefabs/boids/enemyManager";
 import { ExplosionManager, IExplosionManager } from "../prefabs/explosion/explosionManager";
+import { DamageManager } from "../prefabs/damage/damageManager";
 
 export default class GameScene extends Phaser.Scene {
 	score: number;
@@ -29,6 +30,7 @@ export default class GameScene extends Phaser.Scene {
 	worldManager:IWorldManager;
 	enemyManager:IEnemyManager;
 	explosionManager:IExplosionManager;
+	damageManager:DamageManager;
 
 	constructor() {
 		super("Game"); // Name of the scene
@@ -49,6 +51,11 @@ export default class GameScene extends Phaser.Scene {
 		this.projManager = new ProjectileManager(this);
 		this.boidManager = new BoidManager(this);
 		this.boidManager.init(500);
+		this.damageManager = new DamageManager(this);
+		this.damageManager.createPlayerDamabableEntity(this._playerGroup)
+		this.damageManager.registerDamagebleEntitiesForObjects(this.boidManager._boidsData.boidsObjects)
+		
+		
 	 
 		this.boidManager.initAttractors(2,500)
 		this.worldManager = new WorldManager(this);
