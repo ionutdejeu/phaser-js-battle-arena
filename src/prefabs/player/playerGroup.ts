@@ -38,7 +38,7 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
         this._projManager = projManager;
         this.relative_coordinates = [];
       
- 
+        this.name = 'player';
         this.scene.anims.create({
 			key:"player_idle",
 			frames: this.scene.anims.generateFrameNumbers('player_sprites',{

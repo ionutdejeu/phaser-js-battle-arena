@@ -178,8 +178,8 @@ export class BoidManager implements IBoidManager{
             tint: 0xFFFFFF,
             ease: 'Power1',
             duration: 500,
-            onUpdate:()=>{   
-            }
+            onComplete:this.selfDistructCompleted,
+            onCompleteScope:this,
         });
         timeline.play();
 

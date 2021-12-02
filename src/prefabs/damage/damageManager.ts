@@ -36,9 +36,8 @@ export class DamageManager{
     
     constructor(sc:Phaser.Scene){
         this._scene = sc;
-        this._scene.game.events.addListener(DamageEvents.ApplyDamageFromTo,this.applyDamageFromTo,this);
+        this._scene.game.events.addListener(DamageEvents.ApplyDamageFromTo,this.applyDamageTo,this);
         this._scene.game.events.addListener(DamageEvents.ApplySplashDamage,this.applyDamageToArea,this);
-
     }
     setEnemyGroup(g:Phaser.Physics.Arcade.Group){
         this.allCollctionOfEntemies = g
@@ -73,13 +72,21 @@ export class DamageManager{
         } 
     }
 
-    applyDamageFromTo(from:Phaser.Physics.Arcade.Sprite,to:Phaser.Physics.Arcade.Sprite){
+    applyDamageTo(damageableEntity:IDamagebaleEntity,damage:number){
+        damageableEntity.health -=damage;
+        //handle events for entity distruction 
         
     }
 
-    applyDamageToArea(posX:number,posY:number,radius:number){
+    applyDamageToArea(posX:number,posY:number,radius:number,damage:number){
         let overlappingObjects = this._scene.physics.overlapCirc(posX,posY,radius,true,false);
         console.log('damage to objects',overlappingObjects);
+        for(let i = 0;i<=overlappingObjects.length;i++){
+            if(this.entities.has(overlappingObjects[i].gameObject.name)){
+                this.applyDamageTo(this.entities.get(overlappingObjects[i].gameObject.name),damage);
+            }    
+        }
+        
     }   
 
 }
