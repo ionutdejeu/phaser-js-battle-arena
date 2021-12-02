@@ -1,12 +1,14 @@
 import { DamageEvents, IDamigingEntity } from "../damage/damageManager";
 
 export const ExplosionTypes = {
-    GENERIC:"generic_explosion"
+    GENERIC:"generic_explosion",
+    STANDARD_EXPLOSION:"STANDARD_EXPLOSION"
 }
 
 export const ExplosionEvents = {
     SPAWN_EXPLOSION:"SPAWN_EXPLOSION",
 }
+ 
 
 export interface IExplosionType{
     durationInMs:number,
@@ -43,7 +45,17 @@ export class ExplosionManager implements IExplosionManager {
  			duration:100
         };
         this._scene.anims.create(config2)
-        this._explosionTypes.set(ExplosionTypes.GENERIC,{name:"dwa",splashDamage:false,durationInMs:5000});
+        this._explosionTypes.set(ExplosionTypes.GENERIC,{name:"dwa",splashDamage:true,durationInMs:5000});
+
+        const config_classic_expl =  {
+            key: ExplosionTypes.GENERIC,
+            frames: 'boom',
+            frameRate: 30,
+            repeat: -1,
+ 			duration:100
+        };
+        this._explosionTypes.set(ExplosionTypes.STANDARD_EXPLOSION,{name:"dwa",splashDamage:false,durationInMs:100});
+
 
         this._collsionGroup = this._scene.physics.add.staticGroup({});
         this._scene.game.events.addListener(ExplosionEvents.SPAWN_EXPLOSION,(expl)=>{
@@ -51,12 +63,13 @@ export class ExplosionManager implements IExplosionManager {
             let type = this._explosionTypes.get(e.type); 
             this.spawnExplosion(type,e);
         });
+        
     }
 
     spawnExplosion(type:IExplosionType,expl:IExplosion){
         let sprite = this._collsionGroup.create(expl.x,expl.y,type.name) as Phaser.Physics.Arcade.Sprite;
         if(type.splashDamage){
-            this._collsionGroup.add(sprite);
+            this.convertExplosionToDamage(type,expl,sprite);
         }
         sprite.setTint(0xFF0000,0xFF0000,0xFF0000,0xFF0000);
         sprite.setScale(1.2,1.2);
@@ -70,13 +83,12 @@ export class ExplosionManager implements IExplosionManager {
                 this._scene.tweens.remove(counter);
             }
         });
-        // apply damage at the start of the explosion 
-        this.convertExplosionToDamage(type,expl,sprite)
+        
         counter.play();
         sprite.play(ExplosionTypes.GENERIC)
     }
     explosionUpdate(pram:any){
-        
+
     }
 
     explosionComplete(t:IExplosionType, e:IExplosion,sprite:Phaser.Physics.Arcade.Sprite){
@@ -94,7 +106,7 @@ export class ExplosionManager implements IExplosionManager {
     convertExplosionToDamage(t:IExplosionType,e:IExplosion,s:Phaser.Physics.Arcade.Sprite){
         // here we are going to tell the explosion manager to apply damage to a specific area of the map 
         // give a set of parameters of area 
-        this._scene.game.events.emit(DamageEvents.ApplySplashDamage,s.body.x,s.body.y,s.displayWidth);
+        this._scene.game.events.emit(DamageEvents.ApplySplashDamage,s.body.x,s.body.y,s.displayWidth,e.damage.damage);
         // check for damage to the player
 
     }

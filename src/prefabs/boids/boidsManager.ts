@@ -1,3 +1,4 @@
+import { ExplosionEvents, ExplosionTypes, IExplosion } from "../explosion/explosionManager";
 import { PlayerGroup } from "../player/playerGroup";
 
 export interface IBoidManager{
@@ -22,6 +23,7 @@ class BoidPoolCacheData{
     liveObjects:Array<boolean> = []
     collisionGroup:Phaser.Physics.Arcade.Group;
 	boidsObjects:Array<Phaser.Physics.Arcade.Sprite> = []
+    boidExplosions:Map<string,IExplosion> = new Map();
     boidCachedDistances:Float64Array;
     timerEvent:Phaser.Time.TimerEvent;
     animationTimeline:Phaser.Tweens.Timeline;
@@ -33,12 +35,14 @@ class BoidPoolCacheData{
         for(let i=0;i<poolSize;i++){
             if (i < this.liveObjectsCount){
                 this.liveObjects.push(true)
+                
             }else{
                 this.liveObjects.push(false)
             }
         }
         this.poolSizeSquared = this.poolSize**2;
         this.boidCachedDistances = new Float64Array(cachedDataSize);
+        
         
     }
 
@@ -67,7 +71,6 @@ class BoidPoolCacheData{
         this.boidsObjects[index].setVisible(false);
         this.boidsObjects[index].body.enable = false
         this.boidsObjects[index].body.checkCollision.none = true;
-        
     }
 }
 export class BoidManager implements IBoidManager{
@@ -173,25 +176,38 @@ export class BoidManager implements IBoidManager{
         boid.setMaxVelocity(0,0);
         
         let timeline = this._scene.tweens.createTimeline();
+        const selfDestructExplosion:IExplosion = {
+            type:ExplosionTypes.GENERIC,
+            x:boid.body.x,
+            y:boid.body.y,
+            damage:{
+                damage:2
+            }
+        }
+        this._boidsData.boidExplosions.set(boid.name,selfDestructExplosion);
         timeline.add({
             targets: boid,
             tint: 0xFFFFFF,
             ease: 'Power1',
             duration: 500,
-            onComplete:this.selfDistructCompleted,
-            onCompleteScope:this,
+            repeat:0,
+            onComplete:()=>{this.selfDistructCompleted(boid,selfDestructExplosion)},
+            onCompleteScope:this
         });
         timeline.play();
+    
 
     }
-    selfDistructCompleted(){
-        
+    selfDistructCompleted(boid:Phaser.Physics.Arcade.Sprite,explosion:IExplosion){
+        // apply damage 
+        this._scene.game.events.emit(ExplosionEvents.SPAWN_EXPLOSION,explosion);
     }
 
     setupCollisionWith(targetGroup:PlayerGroup){
         this._scene.physics.add.collider(this._boidsData.collisionGroup,targetGroup,(player,boid)=>{
-
-            this.beginSelfDistruct(boid as Phaser.Physics.Arcade.Sprite);
+            if( !this._boidsData.boidExplosions.has(boid.name)){
+                this.beginSelfDistruct(boid as Phaser.Physics.Arcade.Sprite);
+            }
         });
     }
     getClosestBoidTo(playerObject:Phaser.GameObjects.GameObject){
@@ -456,7 +472,8 @@ export class BoidManager implements IBoidManager{
         for(let i=0;i<this._boidsData.boidsObjects.length;i++){
             if(boid == this._boidsData.boidsObjects[i]){
                 this._boidsData.deactivate(i);
-                
+                this._boidsData.boidsObjects[i].setTint(0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF);
+                this._boidsData.boidExplosions.delete(i.toString());
             }
         }
 	}

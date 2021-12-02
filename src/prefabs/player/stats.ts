@@ -13,11 +13,6 @@ export class PlayerDefenceStats{
 
 export class PlayerAttackStats{ 
     damagePerHit:number = 1;
-    /**
-     * Number of miliseconds delay between attacks
-     */
-    attackSpeed:number =200;
-    attackProjectilePrefab:BaseProjectile;
+    attackSpeed:number = 200;
     attackProjectileSpeed:number=200;
-
 }

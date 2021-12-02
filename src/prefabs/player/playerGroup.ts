@@ -1,5 +1,4 @@
-import { Observable, Subject } from 'rxjs'
-import { IProjectileManager } from '../projectiles/projectileManager'
+import { IProjectileManager, ProjectileEvents } from '../projectiles/projectileManager'
 import { PlayerAttackStats, PlayerBodyStats, PlayerDefenceStats } from './stats'
  
 export interface IPlayer{
@@ -31,7 +30,9 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
     _crossHairSprite:Phaser.GameObjects.Sprite;
     
     animation_state:string = 'player_idle'
-
+    _parabolicShootTimer:Phaser.Time.TimerEvent;
+    
+    
     constructor(scene: Phaser.Scene, x: number, y: number,projManager:IProjectileManager)
 	{  
         super(scene,x,y)
@@ -115,16 +116,41 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
 
         scene.add.existing(this);
         this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);
-        this.attackStats = new PlayerAttackStats();
-        this.attackStats.attackSpeed = 200;
+        this.initPlayerStats();
+        this.startShootingTimers();
+        
+        
+    }
+    startShootingTimers(){
+        this.shootTimer.paused=false;
+        
+    }
+    initPlayerStats(body?:PlayerBodyStats,attackStats?:PlayerAttackStats){
+        if(body !==undefined){
+            this.bodyStats = body;
+        }else{
+            this.bodyStats = {
+                health:100,
+                speed:20
+            }
+        }
+        if(attackStats !== undefined){
+            this.attackStats = attackStats
+        }else{
+            this.attackStats = new PlayerAttackStats();
+            this.attackStats.attackSpeed = 200;
+            
+        }
+        if(this.shootTimer!==undefined){
+            this.scene.time.removeEvent(this.shootTimer);
+        } 
         this.shootTimer = this.scene.time.addEvent({
             loop:true,
             callback:this.shootProjectile,
             callbackScope:this,
+            paused:true,
             delay:this.attackStats.attackSpeed,
         });
-        
-        
     }
     getX() {
         return this.x;
@@ -137,7 +163,8 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
         let dirx = (this.x - this.targetX);
         let diry = (this.y - this.targetY);
         let dir = new Phaser.Math.Vector2(dirx,diry).normalize().scale(-this.attackStats.attackProjectileSpeed);
-        this._projManager.spawn(this.x,this.y,dir.x,dir.y);
+        console.log('shoot');
+        this.scene.game.events.emit(ProjectileEvents.SPAWN_BULLET,this.x,this.y,dir.x,dir.y);
     }
     transition_animation(animation_key:string){
         if(this.animation_state!=animation_key){
@@ -179,9 +206,12 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
 		return Phaser.Math.RadToDeg(angleRad);
 	};
     targetObject(gameObj:Phaser.GameObjects.GameObject){
-        this.drawTargetLine(gameObj.body.position.x,gameObj.body.position.y,null);
+        this.drawTargetLine(gameObj.body.position.x,gameObj.body.position.y);
     }
-    drawTargetLine(x,y,updateObservable:Observable<void>){
+
+
+
+    drawTargetLine(x,y){
         this.graphics.clear();
         this.targetX = x
         this.targetY = y
@@ -196,6 +226,7 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
 
         this.graphicsTargetLine.setTo(this.x,this.y,invToPos.x,invToPos.y);
         this.graphics.strokeLineShape(this.graphicsTargetLine);
-        
     }
+
+    
 }

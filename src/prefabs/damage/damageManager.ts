@@ -81,7 +81,8 @@ export class DamageManager{
     applyDamageToArea(posX:number,posY:number,radius:number,damage:number){
         let overlappingObjects = this._scene.physics.overlapCirc(posX,posY,radius,true,false);
         console.log('damage to objects',overlappingObjects);
-        for(let i = 0;i<=overlappingObjects.length;i++){
+        for(let i = 0;i<overlappingObjects.length;i++){
+            
             if(this.entities.has(overlappingObjects[i].gameObject.name)){
                 this.applyDamageTo(this.entities.get(overlappingObjects[i].gameObject.name),damage);
             }    
