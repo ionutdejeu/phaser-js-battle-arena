@@ -48,7 +48,6 @@ export class DamageManager{
     }
     
     registerDamagebleEntityForObject(obj:Phaser.Physics.Arcade.Sprite){
-        console.log(obj.name);
         if(!this.entities.has(obj.name)){
             
             this.entities.set(obj.name,{
@@ -71,18 +70,23 @@ export class DamageManager{
             health:100
         } 
     }
-
+    recoverDamagableEntity(entityName:string){
+        if(this.entities.has(entityName)){
+            let de = this.entities.get(entityName)
+            de.health = 100
+        }
+    }
     applyDamageTo(damageableEntity:IDamagebaleEntity,damage:number){
         damageableEntity.health -=damage;
-        //handle events for entity distruction 
-        
+        //handle events for entity distruction   
+        console.log(damageableEntity.health); 
     }
 
     applyDamageToArea(posX:number,posY:number,radius:number,damage:number){
         let overlappingObjects = this._scene.physics.overlapCirc(posX,posY,radius,true,false);
         console.log('damage to objects',overlappingObjects);
         for(let i = 0;i<overlappingObjects.length;i++){
-            
+            console.log(overlappingObjects[i].gameObject.name);
             if(this.entities.has(overlappingObjects[i].gameObject.name)){
                 this.applyDamageTo(this.entities.get(overlappingObjects[i].gameObject.name),damage);
             }    

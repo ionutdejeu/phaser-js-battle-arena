@@ -59,7 +59,6 @@ export class SustainedExplosion implements BaseProjectile{
         
     }
     onComplete(){
-        console.log('exp complete')
         this._collisionGroup!.killAndHide(this.explosionSprite);
         this.explosionSprite.setActive(false).setVisible(false);
         this._explosionCompleteCallback.call(this._explosionCompleteCallbackCtx,this);
@@ -88,7 +87,6 @@ export class SimpleBallisticProjectile implements BaseProjectile{
         this._linearShadowPath.lineTo(t.absolutePosX,t.absolutePosY);
         this._parabolaPath.quadraticBezierTo(t.absolutePosX,t.absolutePosY, projectileVerticalVector.x+midx,projectileVerticalVector.y+midy);
         this._tween.play();
-        ///this._parabolaPath.quadraticBezierTo(fromX,fromY, midy,-midx);
     }
  
     disable() {
@@ -155,7 +153,7 @@ export class SimpleBallisticProjectile implements BaseProjectile{
 
     
     draw(graphics:Phaser.GameObjects.Graphics){
-        graphics.lineStyle(2, 0xffffff, 1); 
+        graphics.lineStyle(2, 0xffffff,0.2); 
         this._parabolaPath.draw(graphics);
         this._parabolaPath.getPoint(this._parabolaFollower.t, this._parabolaFollower.vec);4
         this._linearShadowPath.getPoint(this._parabolaFollower.t, this._lineFollower.vec);
@@ -170,6 +168,7 @@ export class SimpleBallisticProjectile implements BaseProjectile{
 
     projectileLanded(){
         this._tween.pause();
+        console.log('projectile landed');
         this._onLandProjectileCallback.call(this._onLandProjectileCallbackCtx,this)
     }
      

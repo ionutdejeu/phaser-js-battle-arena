@@ -14,7 +14,7 @@ export interface ProjectileTarget{
     absolutePosY?:number
 }
 
-export const projectileVerticalVector = new Phaser.Math.Vector2(-5,0);
+export const projectileVerticalVector = new Phaser.Math.Vector2(1,0);
 export interface BaseProjectile{
     projectileSprite:Phaser.Physics.Arcade.Sprite;
     explosionSprite:Phaser.Physics.Arcade.Sprite;
@@ -59,7 +59,7 @@ export class BaseObjectPool<T extends BaseProjectile> {
             this.numberActive++;
             return gameObject;
         }else{
-            return this.activeList[this.numberActive-1];
+            return this.activeList[0];
         }
         
     }
@@ -68,6 +68,7 @@ export class BaseObjectPool<T extends BaseProjectile> {
     {
         // Get the index of the gameObject in the active list:
         const index = this.activeList.indexOf(gameObject);
+
         if(index >= 0)
         {
             // Splice the list around the element to remove.
@@ -85,6 +86,7 @@ export class BaseObjectPool<T extends BaseProjectile> {
 
     drawActiveObjects(graphics:Phaser.GameObjects.Graphics){
         for(let i=0;i<this.numberActive;i++){
+
             this.activeList[i].draw(graphics);
         }
     }

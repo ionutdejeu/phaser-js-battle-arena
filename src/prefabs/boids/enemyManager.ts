@@ -133,8 +133,7 @@ export class EnemyManager implements IEnemyManager{
     }
 
     spawnAt(x:number,y:number){
-        console.log(this._enemyGroups.children);
-        console.log(this._enemyMap);
+
         
         for(let i=0;i<this._poolSize;i++){
 

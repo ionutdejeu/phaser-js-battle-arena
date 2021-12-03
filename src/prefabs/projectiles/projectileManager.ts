@@ -72,11 +72,9 @@ export class ProjectileManager implements IProjectileManager{
         this._scene.anims.create(config2)
         
         this._scene.game.events.on(ProjectileEvents.SPAWN_BULLET,(posX:number,posY:number,dirX:number,dirY:number)=>{
-            console.log('Fire projectile');
             this.spawn(posX,posY,dirX,dirY);
         },this);
         this._scene.game.events.on(ProjectileEvents.SPAWN_PARABOLIC_PROJECTILE,(posX:number,posY:number,targetX:number,targetY:number)=>{
-            console.log('Fire SPAWN_PARABOLIC_PROJECTILE projectile');
             this.spawnParabolicProjectile(posX,posY,targetX,targetY);
         },this);
 
@@ -113,6 +111,7 @@ export class ProjectileManager implements IProjectileManager{
        }
        this._scene.game.events.emit(ExplosionEvents.SPAWN_EXPLOSION,explosion)
     }
+    
     parabolicExplosionHandler(exp:BaseProjectile){
         this._sustainedExplosionPool.returnGameObject(exp);
     }
@@ -122,7 +121,7 @@ export class ProjectileManager implements IProjectileManager{
     }
     spawnParabolicProjectile(posX:number,posY:number,targetX:number,targetY:number){
         let parabilicProjectile = this._parabolicProjectilePool.getGameObject();
-        parabilicProjectile.reset({originX:posY,
+        parabilicProjectile.reset({originX:posX,
             originY:posY,
             absolutePosX:targetX,
             absolutePosY:targetY});
@@ -131,7 +130,6 @@ export class ProjectileManager implements IProjectileManager{
         this._scene.physics.add.overlap(this._collisionGroup,boidManager.getBoidCollisionGroup(),(obj,obj2)=>{
             // to instantiate an explosion
             boidManager.deactivateBoid(obj2 as Phaser.Physics.Arcade.Sprite)
-            //let explosion = this._explosionGroup.get(obj2.body.x,obj2.body.y) as Phaser.GameObjects.Sprite;
              
             let expl:IExplosion = {
                 type:ExplosionTypes.STANDARD_EXPLOSION,
@@ -142,11 +140,6 @@ export class ProjectileManager implements IProjectileManager{
                 }
             }
             this._scene.game.events.emit(ExplosionEvents.SPAWN_EXPLOSION,expl);
-            //explosion.setActive(true).setVisible(true).play('explode_projectile')
-            //.on('animationcomplete', ()=>{
-            //    this._explosionGroup!.killAndHide(explosion);
-            //    explosion.setActive(false).setVisible(false);
-            //},this);
             obj.destroy();
         });
     }

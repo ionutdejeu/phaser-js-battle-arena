@@ -22,6 +22,7 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
     bodyStats: PlayerBodyStats;
     defenceStats: PlayerDefenceStats;
     attackStats:PlayerAttackStats;
+    parabolicAttackStats:PlayerAttackStats;
     targetX:number
     targetY:number
     shootTimer:Phaser.Time.TimerEvent;
@@ -117,14 +118,18 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
         scene.add.existing(this);
         this.getWorldTransformMatrix(this.tempMatrix, this.tempParentMatrix);
         this.initPlayerStats();
+        this.initParabolicProjectile();
         this.startShootingTimers();
         
         
     }
     startShootingTimers(){
         this.shootTimer.paused=false;
+        this._parabolicShootTimer.paused =false;
         
     }
+
+
     initPlayerStats(body?:PlayerBodyStats,attackStats?:PlayerAttackStats){
         if(body !==undefined){
             this.bodyStats = body;
@@ -152,6 +157,28 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
             delay:this.attackStats.attackSpeed,
         });
     }
+
+    initParabolicProjectile(attackStats?:PlayerAttackStats){
+
+        if(attackStats !== undefined){
+            this.parabolicAttackStats = attackStats
+        }else{
+            this.parabolicAttackStats = new PlayerAttackStats();
+            this.parabolicAttackStats.attackSpeed = 2000;
+        }
+
+        if(this._parabolicShootTimer!==undefined){
+            this.scene.time.removeEvent(this._parabolicShootTimer);
+        } 
+        this._parabolicShootTimer = this.scene.time.addEvent({
+            loop:true,
+            callback:this.shootParabolicProjectile,
+            callbackScope:this,
+            paused:true,
+            delay:this.parabolicAttackStats.attackSpeed,
+        });
+    }
+
     getX() {
         return this.x;
     }
@@ -163,8 +190,11 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
         let dirx = (this.x - this.targetX);
         let diry = (this.y - this.targetY);
         let dir = new Phaser.Math.Vector2(dirx,diry).normalize().scale(-this.attackStats.attackProjectileSpeed);
-        console.log('shoot');
         this.scene.game.events.emit(ProjectileEvents.SPAWN_BULLET,this.x,this.y,dir.x,dir.y);
+    }
+    shootParabolicProjectile(){
+        this.scene.game.events.emit(ProjectileEvents.SPAWN_PARABOLIC_PROJECTILE,this.x,this.y,this.targetX,this.targetY)
+
     }
     transition_animation(animation_key:string){
         if(this.animation_state!=animation_key){
@@ -172,11 +202,7 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
             this.animation_state = animation_key
         }
     }
-    update_collisions(){
-        
-    }
 
-    
     update_virtual(direction:Phaser.Math.Vector2){
 		if (direction.lengthSq()>0){
             

@@ -180,7 +180,6 @@ export class InputManager{
                 ctrl.disable();               
             }
             this.inputControllers.push(ctrl);
-            console.log('enabled android');
             ctrl.enable();
             let sub = ctrl.onValueChange.subscribe((vec:Phaser.Math.Vector2)=>{
                 this.onAxisChangedObservable.next(vec);
@@ -188,7 +187,6 @@ export class InputManager{
              
             this.ctrlEventSubs.push(sub)
         }else{
-            console.log('disabled android');
             ctrl.disable();
         }
     }

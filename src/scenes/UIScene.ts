@@ -37,7 +37,6 @@ export class UIScene extends Phaser.Scene {
 	create(): void {
 		this.setupUIElements();
 		this.setupEvents();
-		console.log(this.cameras.main);
 	}
 
 	update(){

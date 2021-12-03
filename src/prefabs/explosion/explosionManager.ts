@@ -100,7 +100,6 @@ export class ExplosionManager implements IExplosionManager {
         }
         sprite.stop();
         sprite.destroy();
-        console.log('stoped anim')
     }
 
     convertExplosionToDamage(t:IExplosionType,e:IExplosion,s:Phaser.Physics.Arcade.Sprite){
