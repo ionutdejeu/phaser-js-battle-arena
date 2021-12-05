@@ -31,6 +31,10 @@ export class UIScene extends Phaser.Scene {
 		//this._itemBar.init();
 		this._in_game_menut = new InGameUiManager(this);
 		this._in_game_menut.init();
+		this.game.events.addListener("updateScoreUI",(score: number) => {
+			console.log('score update');
+			this.scoreText.setText(`Parts: ${score}`);
+		});
 		
 	}
 

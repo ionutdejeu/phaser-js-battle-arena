@@ -1,6 +1,12 @@
 import { ExplosionEvents, ExplosionTypes, IExplosion } from "../explosion/explosionManager";
 import { PlayerGroup } from "../player/playerGroup";
+import { ScoreEvents } from "../score/scoreManager";
 
+
+export const BoidEvents ={ 
+    BOID_DISTROY:"BOID_DISTROY",
+    BOID_SPAWN:"BOID_SPAWN"
+}
 export interface IBoidManager{
     init(maxNurBoids:integer):void;
     get(x:number,y:number);
@@ -99,8 +105,19 @@ export class BoidManager implements IBoidManager{
         this._boidsData = new BoidPoolCacheData();
         this._attractorsCachedData = new BoidPoolCacheData();
         this._repelersCachedData = new BoidPoolCacheData();
+        this._scene.game.events.addListener(BoidEvents.BOID_DISTROY,this.HandleOnBoidDistroyEvents,this);
         
 
+    }
+    HandleOnBoidDistroyEvents(boidName:string){
+        for(let i =0;i<this._boidsData.poolSize;i++){
+            if(this._boidsData.boidsObjects[i].name == boidName){
+                if(this._boidsData.liveObjects[i]){
+                    console.log('found boid',boidName);
+                    this.deactivateBoid(this._boidsData.boidsObjects[i]);
+                }
+            }
+        }
     }
     followSprite(s:Phaser.Physics.Arcade.Sprite){
         this.spawnAttractor(s);
@@ -125,12 +142,13 @@ export class BoidManager implements IBoidManager{
     }
 
     beginDeactivateBoid(boid: Phaser.Physics.Arcade.Sprite){
-
+        
     }
     
     deactivateBoid(boid: Phaser.Physics.Arcade.Sprite) {
         this.makeInactive(boid)
         this._boidsData.collisionGroup.remove(boid);
+        this._scene.game.events.emit(ScoreEvents.UPDATE_SCORE,10);
     }
     spawnAtRandom(){
         for(let i = 0;i<10;i++){

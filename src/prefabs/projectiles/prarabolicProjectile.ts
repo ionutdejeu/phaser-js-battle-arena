@@ -85,7 +85,7 @@ export class SimpleBallisticProjectile implements BaseProjectile{
         let midx = (t.absolutePosX - t.originX);
         let midy = (t.absolutePosY - t.originY);
         this._linearShadowPath.lineTo(t.absolutePosX,t.absolutePosY);
-        this._parabolaPath.quadraticBezierTo(t.absolutePosX,t.absolutePosY, projectileVerticalVector.x+midx,projectileVerticalVector.y+midy);
+        this._parabolaPath.quadraticBezierTo(t.absolutePosX,t.absolutePosY, projectileVerticalVector.x+midx+t.originX,projectileVerticalVector.y+midy+t.originY);
         this._tween.play();
     }
  
@@ -130,7 +130,7 @@ export class SimpleBallisticProjectile implements BaseProjectile{
         this._linearShadowPath = new Phaser.Curves.Path();
 
         this.settings = {
-            airTimeInMs:5000,
+            airTimeInMs:1000,
             explosionDurationInMs:5000
         }
         this._scene = collisionGroup.scene;

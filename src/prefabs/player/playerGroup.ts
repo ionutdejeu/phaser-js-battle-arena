@@ -232,7 +232,10 @@ export class PlayerGroup extends Phaser.GameObjects.Container implements IPlayer
 		return Phaser.Math.RadToDeg(angleRad);
 	};
     targetObject(gameObj:Phaser.GameObjects.GameObject){
-        this.drawTargetLine(gameObj.body.position.x,gameObj.body.position.y);
+        if(gameObj != null && gameObj != undefined){
+            console.log('targeting boid:',gameObj.name);
+            this.drawTargetLine(gameObj.body.position.x,gameObj.body.position.y);
+        }
     }
 
 

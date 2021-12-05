@@ -105,7 +105,8 @@ export class ExplosionManager implements IExplosionManager {
     convertExplosionToDamage(t:IExplosionType,e:IExplosion,s:Phaser.Physics.Arcade.Sprite){
         // here we are going to tell the explosion manager to apply damage to a specific area of the map 
         // give a set of parameters of area 
-        this._scene.game.events.emit(DamageEvents.ApplySplashDamage,s.body.x,s.body.y,s.displayWidth,e.damage.damage);
+        console.log('Damage from explosion');
+        this._scene.game.events.emit(DamageEvents.ApplySplashDamage,s.body.x,s.body.y,1,e.damage.damage);
         // check for damage to the player
 
     }

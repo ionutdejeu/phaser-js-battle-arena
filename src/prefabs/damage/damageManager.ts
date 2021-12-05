@@ -1,4 +1,5 @@
 import { map } from "rxjs";
+import { BoidEvents } from "../boids/boidsManager";
 import { IPlayer } from "../player/playerGroup";
 
 
@@ -49,7 +50,6 @@ export class DamageManager{
     
     registerDamagebleEntityForObject(obj:Phaser.Physics.Arcade.Sprite){
         if(!this.entities.has(obj.name)){
-            
             this.entities.set(obj.name,{
                 health:10,
                 sprite:obj
@@ -61,7 +61,6 @@ export class DamageManager{
         for(let i=0;i<objs.length;i++){
             this.registerDamagebleEntityForObject(objs[i])
         }
-        console.log(this.entities);
     }
 
 
@@ -76,19 +75,22 @@ export class DamageManager{
             de.health = 100
         }
     }
-    applyDamageTo(damageableEntity:IDamagebaleEntity,damage:number){
+    applyDamageTo(boidName:string, damageableEntity:IDamagebaleEntity,damage:number){
         damageableEntity.health -=damage;
-        //handle events for entity distruction   
-        console.log(damageableEntity.health); 
+        //handle events for entity distruction  
+         
+        if(damageableEntity.health<0){
+            console.log('damaging:',boidName);
+            this._scene.game.events.emit(BoidEvents.BOID_DISTROY,boidName)
+        }
+
     }
 
     applyDamageToArea(posX:number,posY:number,radius:number,damage:number){
         let overlappingObjects = this._scene.physics.overlapCirc(posX,posY,radius,true,false);
-        console.log('damage to objects',overlappingObjects);
         for(let i = 0;i<overlappingObjects.length;i++){
-            console.log(overlappingObjects[i].gameObject.name);
             if(this.entities.has(overlappingObjects[i].gameObject.name)){
-                this.applyDamageTo(this.entities.get(overlappingObjects[i].gameObject.name),damage);
+                this.applyDamageTo(overlappingObjects[i].gameObject.name,this.entities.get(overlappingObjects[i].gameObject.name),damage);       
             }    
         }
         

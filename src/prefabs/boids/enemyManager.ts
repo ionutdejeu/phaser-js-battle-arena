@@ -134,11 +134,8 @@ export class EnemyManager implements IEnemyManager{
 
     spawnAt(x:number,y:number){
 
-        
         for(let i=0;i<this._poolSize;i++){
-
             if(!this._enemyMap.get(i).enabled){
-                
                 let en = this._enemyMap.get(i); 
                 en.enabled = true;
                 en.sprite.enableBody(true,x,y,true,true);

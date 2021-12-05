@@ -97,8 +97,8 @@ export class ProjectileManager implements IProjectileManager{
     }
 
     parabolicProjectileLandedHandle(projectile: BaseProjectile){
-       let expl=this._sustainedExplosionPool.getGameObject();
-       expl.reset({originX:projectile.getX(),originY:projectile.getY()});
+       //let expl=this._sustainedExplosionPool.getGameObject();
+       //expl.reset({originX:projectile.getX(),originY:projectile.getY()});
        this._parabolicProjectilePool.returnGameObject(projectile);
        let explosion: IExplosion = {
            type:ExplosionTypes.GENERIC,
